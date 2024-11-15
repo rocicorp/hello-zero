@@ -1,0 +1,40 @@
+# fly.toml app configuration file generated for zero-cache on 2024-11-08T12:20:44-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'myapp-zero-cache'
+primary_region = 'lax'
+
+[build]
+image = "registry.hub.docker.com/rocicorp/zero:latest"
+
+[env]
+ZERO_UPSTREAM_MAX_CONNS = "60"
+ZERO_CHANGE_MAX_CONNS = "3"
+ZERO_REPLICA_FILE = "/data/sync-replica-1114.db"
+ZERO_CVR_MAX_CONNS = "275"
+ZERO_CONFIG = "H4sICPGXN2cAA3NjaGVtYS50cwCtVcFO3DAQvecrRjmBlMXqNRTEoZeqKodCT1UPjjO7sRTbqT0uhIp/78RJloQFxKq9ZOPxezNvJk+zQsBtgwGhliQhkI+KoscANW61Rehd9KBajZY2QdcIQTVo5FkmErEHEwNBhYC/omyBHDgPnChWAQncFqhhDvrf6A/4144w3eceW0na2dDoLuSw1djWBdw1WjWTkMBBH2ijWhnCQF5RWADdIVogWbUYUvYbRGiIulAKsdPUxOpMOSO8U1o53wnjrBNV6yphpLZCdl0QD1XcBRG8ErVL0UktpZJbbs04j8B5uhbvAe/l8BIK0Fa1sdZ2B0bafkNuM/yeZZk2nfMEfzIA5VES3qSMxf58Oyh+ClLfISxit+6buyuyR9h6ZyC/2st/QO/y8yxTPAKCyCMeCXBxmPhkKJ9Gcy0NlpAP8DxpcG00NpRJIICu+S1pYBCbgRvK4bFIdzZRX7vtpCeLfgGonGtR2gmRHp3XRvr+C/Yl/Mh1nf8coqsvyQkY+ni678xgraM5oreR8D+7+wftIcgdHiU+MY5VH9DW6D9/eh0xTuUtROXq/vVb0iyN2O4LiI2mYh8dPaSF5PnEZ140KhWeesmL6abmwk84mDZICSencHG5cH6xR6T9walYwByc2lhN44Xi85jeWXxpzneXnz2C92k1jFYJa48s7MGbM/DwSvhQzGbZD3FovjwYwdzdobrJXuXamS+ISmto79vhxKt81Hi+wnwdEzHo+dL6OLFWpS6fsweFb5KfWnjG/c5dv8GcN/f4hzCMiPl/ARaZnxPuBgAA"
+LOG_LEVEL = "debug"
+
+[http_service]
+  internal_port = 4848
+  force_https = true
+  auto_stop_machines = 'off'
+  min_machines_running = 1
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "GET"
+  timeout = "5s"
+  path = "/"
+
+[[vm]]
+  memory = '2gb'
+  cpu_kind = 'shared'
+  cpus = 2
+
+[mounts]
+  source = "sqlite_db"
+  destination = "/data"
