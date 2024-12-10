@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:zero-cache": "zero-cache",
+    "build-schema": "zero-build-schema -p 'src/schema.ts'",
     "docker-up": "docker compose --env-file .env -f ./docker/docker-compose.yml up",
     "docker-down": "docker compose --env-file .env -f ./docker/docker-compose.yml down",
     "clean": "source .env && docker volume rm -f docker_zstart_pgdata && rm -rf \"${ZERO_REPLICA_FILE}\"*",
