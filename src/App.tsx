@@ -38,17 +38,26 @@ function App() {
   const [action, setAction] = useState<"add" | "remove" | undefined>(undefined);
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const deleteRandomMessage = () => {
+    if (allMessages.length === 0) {
+      return false;
+    }
+    const index = randInt(allMessages.length);
+    z.mutate.message.delete({ id: allMessages[index].id });
+
+    return true;
+  };
+
+  const addRandomMessage = () => {
+    z.mutate.message.insert(randomMessage(users, mediums));
+    return true;
+  };
+
   const handleAction = () => {
     if (action === "add") {
-      z.mutate.message.insert(randomMessage(users, mediums));
-      return true;
+      return addRandomMessage();
     } else if (action === "remove") {
-      if (allMessages.length === 0) {
-        return false;
-      }
-      const index = randInt(allMessages.length);
-      z.mutate.message.delete({ id: allMessages[index].id });
-      return true;
+      return deleteRandomMessage();
     }
 
     return false;
@@ -63,12 +72,12 @@ function App() {
     action !== undefined ? 1000 / 60 : null
   );
 
-  const INITIAL_HOLD_DELAY = 300;
+  const INITIAL_HOLD_DELAY_MS = 300;
   const handleAddAction = () => {
-    z.mutate.message.insert(randomMessage(users, mediums));
+    addRandomMessage();
     holdTimerRef.current = setTimeout(() => {
       setAction("add");
-    }, INITIAL_HOLD_DELAY);
+    }, INITIAL_HOLD_DELAY_MS);
   };
 
   const handleRemoveAction = (e: MouseEvent | React.TouchEvent) => {
@@ -76,14 +85,11 @@ function App() {
       alert("You must be logged in to delete. Hold shift to try anyway.");
       return;
     }
-    if (allMessages.length > 0) {
-      const index = randInt(allMessages.length);
-      z.mutate.message.delete({ id: allMessages[index].id });
-    }
+    deleteRandomMessage();
 
     holdTimerRef.current = setTimeout(() => {
       setAction("remove");
-    }, INITIAL_HOLD_DELAY);
+    }, INITIAL_HOLD_DELAY_MS);
   };
 
   const stopAction = () => {
