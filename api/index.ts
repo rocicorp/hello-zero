@@ -1,9 +1,9 @@
 import { randomInt } from "crypto";
+import dotenv from "dotenv";
 import { Hono } from "hono";
+import { setCookie } from "hono/cookie";
 import { handle } from "hono/vercel";
 import { SignJWT } from "jose";
-import { setCookie } from "hono/cookie";
-import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -41,7 +41,9 @@ app.get("/login", async (c) => {
   return c.text("ok");
 });
 
-export default handle(app);
+const handler = handle(app);
+
+export const GET = handler;
 
 function must<T>(val: T) {
   if (!val) {

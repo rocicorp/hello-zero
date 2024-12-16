@@ -1,9 +1,12 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
 import { getRequestListener } from "@hono/node-server";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 import { app } from "./api/index.js";
 
 export default defineConfig({
+  build: {
+    target: "es2022",
+  },
   optimizeDeps: {
     esbuildOptions: {
       target: "es2022",
