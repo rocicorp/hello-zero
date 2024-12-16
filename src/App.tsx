@@ -10,6 +10,7 @@ import { formatDate } from "./date";
 
 function App() {
   const z = useZero<Schema>();
+  console.log("z", z);
   const [users] = useQuery(z.query.user);
   const [mediums] = useQuery(z.query.medium);
 
@@ -98,7 +99,7 @@ function App() {
 
   const toggleLogin = async () => {
     if (z.userID === "anon") {
-      await fetch("/api/login");
+      await fetch(import.meta.env.HONO_SERVER + "/api/login");
     } else {
       Cookies.remove("jwt");
     }

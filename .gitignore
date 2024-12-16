@@ -26,3 +26,6 @@ dist-ssr
 
 # zero
 zero-schema.json
+
+# sst
+.sst
