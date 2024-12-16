@@ -1,11 +1,11 @@
-import { randomInt } from "crypto";
-import dotenv from "dotenv";
 import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
 import { handle } from "hono/vercel";
 import { SignJWT } from "jose";
 
-dotenv.config();
+export const config = {
+  runtime: "edge",
+};
 
 export const app = new Hono().basePath("/api");
 
@@ -22,6 +22,10 @@ const userIDs = [
   "enVvyDlBul",
   "9ogaDuDNFx",
 ];
+
+function randomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
 
 app.get("/login", async (c) => {
   const jwtPayload = {
@@ -41,9 +45,7 @@ app.get("/login", async (c) => {
   return c.text("ok");
 });
 
-const handler = handle(app);
-
-export const GET = handler;
+export default handle(app);
 
 function must<T>(val: T) {
   if (!val) {
@@ -51,3 +53,7 @@ function must<T>(val: T) {
   }
   return val;
 }
+
+// export default (request: Request) => {
+//   return new Response(`Hello, from ${request.url} I'm now an Edge Function!`);
+// };
