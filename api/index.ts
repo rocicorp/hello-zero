@@ -1,6 +1,7 @@
 import { randomInt } from "crypto";
 import { Hono } from "hono";
-import { handle } from "hono/vercel";
+import { handle as handleSST } from "hono/aws-lambda";
+import { handle as handleVercel } from "hono/vercel";
 import { SignJWT } from "jose";
 import { setCookie } from "hono/cookie";
 import dotenv from "dotenv";
@@ -41,7 +42,7 @@ app.get("/login", async (c) => {
   return c.text("ok");
 });
 
-export default handle(app);
+export default handleVercel(app);
 
 function must<T>(val: T) {
   if (!val) {
@@ -49,3 +50,5 @@ function must<T>(val: T) {
   }
   return val;
 }
+
+export const handler = handleSST(app);

@@ -26,7 +26,51 @@ npx zero-cache
 npm run dev
 ```
 
-## Option 2: Install Zero in your own project
+
+## Option 2: Deploy Zero with SST
+
+This guide explains how to deploy Zero with SST using our example project.
+
+First, Install all the dependencies:
+
+```sh
+npm i
+```
+
+Next, Install SST Tunnel 
+
+```sh
+sudo sst tunnel install
+```
+**Note:** This is used to connect to the database VPC from your local machine in Dev.
+
+
+Then run the SST dev command:
+
+```sh
+sst dev
+```
+
+This automatically starts the local React dev server, Zero server, Hono API, and deploys the Postgres database and creates the relevant schemas.
+
+**Note:** For your first deploy it can take up to 15 minutes for the postgres database to be ready.
+
+
+### Deploying to AWS
+
+To deploy to AWS, run the following command:
+
+```sh
+sst deploy --stage=production
+```
+
+
+
+
+
+
+
+## Option 3: Install Zero in your own project
 
 This guide explains how to set up Zero in your React application, using this
 repository as a reference implementation.

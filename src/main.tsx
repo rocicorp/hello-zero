@@ -11,11 +11,11 @@ import { decodeJwt } from "jose";
 const encodedJWT = Cookies.get("jwt");
 const decodedJWT = encodedJWT && decodeJwt(encodedJWT);
 const userID = decodedJWT?.sub ? (decodedJWT.sub as string) : "anon";
-
+console.log(import.meta.env);
 const z = new Zero({
   userID,
   auth: () => encodedJWT,
-  server: import.meta.env.VITE_PUBLIC_SERVER,
+  server: import.meta.env.ZERO_SERVER,
   schema,
   // This is often easier to develop with if you're frequently changing
   // the schema. Switch to 'idb' for local-persistence.
