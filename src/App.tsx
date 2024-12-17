@@ -158,7 +158,7 @@ function App() {
           >
             Remove Messages
           </button>
-          <em>(hold down for multiple)</em>
+          <em>(hold down buttons to repeat)</em>
         </div>
         <div
           style={{
