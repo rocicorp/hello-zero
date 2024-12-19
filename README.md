@@ -11,19 +11,19 @@ npm i
 Next, run docker:
 
 ```sh
-npm run docker-up
+npm run dev:db-up
 ```
 
 **In a second terminal**, run the zero cache server:
 
 ```sh
-npx zero-cache
+npm run dev:zero-cache
 ```
 
 **In a third terminal**, run the Vite dev server:
 
 ```sh
-npm run dev
+npm run dev:ui
 ```
 
 ## Option 2: Install Zero in your own project
