@@ -75,8 +75,6 @@ VITE_PUBLIC_SERVER=http://localhost:4848
 npm install @rocicorp/zero
 ```
 
-This is a private repository. You'll need NPM access.
-
 2. **Create Schema** Define your database schema using Zero's schema builder.
    See [schema.ts](src/schema.ts) for example:
 
