@@ -20,8 +20,8 @@ function App() {
   const [allMessages] = useQuery(all);
 
   let filtered = all
-    .related("medium", (medium) => medium.one())
-    .related("sender", (sender) => sender.one())
+    .related("medium")
+    .related("sender")
     .orderBy("timestamp", "desc");
 
   if (filterUser) {
