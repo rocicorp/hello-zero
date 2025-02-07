@@ -17,8 +17,8 @@ CREATE TABLE "medium" (
 
 CREATE TABLE "message" (
   "id" VARCHAR PRIMARY KEY,
-  "senderID" VARCHAR REFERENCES "user"(id),
-  "mediumID" VARCHAR REFERENCES "medium"(id),
+  "sender_id" VARCHAR REFERENCES "user"(id),
+  "medium_id" VARCHAR REFERENCES "medium"(id),
   "body" VARCHAR NOT NULL,
   "timestamp" TIMESTAMP not null
 );
