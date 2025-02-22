@@ -30,6 +30,10 @@ declare module "sst" {
     "vpc": {
       "type": "sst.aws.Vpc"
     }
+    "zero-permissions-deployer": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
   }
 }
 /// <reference path="sst-env.d.ts" />
