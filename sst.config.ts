@@ -24,6 +24,7 @@ export default $config({
     // VPC Configuration
     const vpc = new sst.aws.Vpc(`vpc`, {
       az: 2,
+      nat: "ec2",
     });
 
     // ECS Cluster
@@ -134,15 +135,24 @@ export default $config({
       },
     });
 
-    new command.local.Command(
-      "zero-deploy-permissions",
+    const permissionsDeployer = new sst.aws.Function(
+      "zero-permissions-deployer",
       {
-        // Pulumi operates with cwd at the package root.
-        create: `npx zero-deploy-permissions`,
-        // Run the Command on every deploy ...
-        triggers: [Date.now()],
+        handler: "./functions/src/permissions.deploy",
+        vpc,
+        environment: { ["ZERO_UPSTREAM_DB"]: conn.value },
+        copyFiles: [{ from: "./src/schema.ts", to: "./schema.ts" }],
+        nodejs: { install: [`@rocicorp/zero`] },
+      }
+    );
+
+    new aws.lambda.Invocation(
+      "invoke-zero-permissions-deployer",
+      {
+        // Invoke the Lambda on every deploy.
+        input: Date.now().toString(),
+        functionName: permissionsDeployer.name,
       },
-      // after the view-syncer is deployed.
       { dependsOn: viewSyncer }
     );
   },
