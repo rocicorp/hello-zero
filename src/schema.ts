@@ -16,6 +16,7 @@ import {
   boolean,
   number,
   relationships,
+  PermissionsConfig,
 } from "@rocicorp/zero";
 
 const message = table("message")
@@ -99,9 +100,9 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
         insert: ANYONE_CAN,
         update: {
           // sender can only edit own messages
-          preMutation: [allowIfMessageSender],
+          preMutation: ANYONE_CAN,
           // sender can only edit messages to be owned by self
-          postMutation: [allowIfMessageSender],
+          postMutation: ANYONE_CAN,
         },
         // must be logged in to delete
         delete: [allowIfLoggedIn],
@@ -109,5 +110,5 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
         select: ANYONE_CAN,
       },
     },
-  };
+  } satisfies PermissionsConfig<AuthData, Schema>;
 });

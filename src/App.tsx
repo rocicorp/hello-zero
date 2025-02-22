@@ -49,7 +49,12 @@ function App() {
   };
 
   const addRandomMessage = () => {
-    z.mutate.message.insert(randomMessage(users, mediums));
+    const msg = randomMessage(users, mediums);
+    z.mutate.message.insert(msg);
+    z.mutate.message.update({
+      id: msg.id,
+      body: msg.body + " (updated)",
+    });
     return true;
   };
 

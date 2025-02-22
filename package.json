@@ -4,24 +4,26 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "build": "tsc -b && vite build",
+    "dev:clean": "source .env && docker volume rm -f docker_zstart_pgdata && rm -rf \"${ZERO_REPLICA_FILE}\"*",
+    "dev:db-down": "docker compose --env-file .env -f ./docker/docker-compose.yml down",
+    "dev:db-up": "docker compose --env-file .env -f ./docker/docker-compose.yml up",
     "dev:ui": "vite",
     "dev:zero-cache": "zero-cache-dev -p src/schema.ts",
-    "dev:db-up": "docker compose --env-file .env -f ./docker/docker-compose.yml up",
-    "dev:db-down": "docker compose --env-file .env -f ./docker/docker-compose.yml down",
-    "dev:clean": "source .env && docker volume rm -f docker_zstart_pgdata && rm -rf \"${ZERO_REPLICA_FILE}\"*",
-    "build": "tsc -b && vite build",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@rocicorp/zero": "0.15.2025021402",
+    "@rocicorp/zero": "0.16.2025021700",
     "jose": "^5.9.6",
     "js-cookie": "^3.0.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "sst": "3.7.15"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@hono/node-server": "^1.13.2",
+    "@types/aws-lambda": "8.10.147",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^22.7.9",
     "@types/react": "^18.3.3",
@@ -44,5 +46,6 @@
     "onlyBuiltDependencies": [
       "@rocicorp/zero-sqlite3"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.4.0+sha512.6b849d0787d97f8f4e1f03a9b8ff8f038e79e153d6f11ae539ae7c435ff9e796df6a862c991502695c7f9e8fac8aeafc1ac5a8dab47e36148d183832d886dd52"
 }
