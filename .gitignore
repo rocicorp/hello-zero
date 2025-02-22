@@ -29,3 +29,6 @@ dist-ssr
 # zero
 zero-schema.json
 .vercel
+
+# sst
+.sst
