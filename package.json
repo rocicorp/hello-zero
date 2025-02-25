@@ -13,11 +13,12 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@rocicorp/zero": "0.15.2025021402",
+    "@rocicorp/zero": "0.16.2025022501",
     "jose": "^5.9.6",
     "js-cookie": "^3.0.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "sst": "3.7.15"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
@@ -44,5 +45,9 @@
     "onlyBuiltDependencies": [
       "@rocicorp/zero-sqlite3"
     ]
+  },
+  "_": "For some reason, sst requires esbuild 0.25.0 when deploying the permission deployer",
+  "overrides": {
+    "esbuild": "0.25.0"
   }
 }
