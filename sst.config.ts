@@ -9,6 +9,9 @@ export default $config({
       removal: input?.stage === "production" ? "retain" : "remove",
       home: "aws",
       region: process.env.AWS_REGION || "us-east-1",
+      providers: {
+        command: true,
+      },
     };
   },
   async run() {
@@ -24,7 +27,6 @@ export default $config({
     // VPC Configuration
     const vpc = new sst.aws.Vpc(`vpc`, {
       az: 2,
-      nat: "ec2",
     });
 
     // ECS Cluster
@@ -51,8 +53,9 @@ export default $config({
 
     // Replication Manager Service
     const replicationManager = cluster.addService(`replication-manager`, {
-      cpu: "2 vCPU",
-      memory: "8 GB",
+      cpu: "0.5 vCPU",
+      memory: "1 GB",
+      architecture: "arm64",
       image: commonEnv.ZERO_IMAGE_URL,
       link: [replicationBucket],
       health: {
@@ -94,8 +97,9 @@ export default $config({
 
     // View Syncer Service
     const viewSyncer = cluster.addService(`view-syncer`, {
-      cpu: "2 vCPU",
-      memory: "8 GB",
+      cpu: "1 vCPU",
+      memory: "2 GB",
+      architecture: "arm64",
       image: commonEnv.ZERO_IMAGE_URL,
       link: [replicationBucket],
       health: {
@@ -135,24 +139,18 @@ export default $config({
       },
     });
 
-    const permissionsDeployer = new sst.aws.Function(
-      "zero-permissions-deployer",
+    // Update permissions
+    new command.local.Command(
+      "zero-deploy-permissions",
       {
-        handler: "./functions/src/permissions.deploy",
-        vpc,
-        environment: { ["ZERO_UPSTREAM_DB"]: conn.value },
-        copyFiles: [{ from: "./src/schema.ts", to: "./schema.ts" }],
-        nodejs: { install: [`@rocicorp/zero`] },
-      }
-    );
-
-    new aws.lambda.Invocation(
-      "invoke-zero-permissions-deployer",
-      {
-        // Invoke the Lambda on every deploy.
-        input: Date.now().toString(),
-        functionName: permissionsDeployer.name,
+        create: `npx zero-deploy-permissions -p ../../src/schema.ts`,
+        // Run the Command on every deploy ...
+        triggers: [Date.now()],
+        environment: {
+          ZERO_UPSTREAM_DB: commonEnv.ZERO_UPSTREAM_DB,
+        },
       },
+      // after the view-syncer is deployed.
       { dependsOn: viewSyncer }
     );
   },
