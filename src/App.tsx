@@ -1,5 +1,4 @@
 import { useState, MouseEvent, useRef } from "react";
-import Cookies from "js-cookie";
 import { useQuery, useZero } from "@rocicorp/zero/react";
 import { escapeLike } from "@rocicorp/zero";
 import { Schema } from "./schema";
@@ -8,7 +7,7 @@ import { randInt } from "./rand";
 import { useInterval } from "./use-interval";
 import { formatDate } from "./date";
 
-function App() {
+function App({ toggleLogin }: { toggleLogin: () => void }) {
   const z = useZero<Schema>();
   const [users] = useQuery(z.query.user);
   const [mediums] = useQuery(z.query.medium);
@@ -120,20 +119,6 @@ function App() {
     });
   };
 
-  const toggleLogin = async () => {
-    if (z.userID === "anon") {
-      await fetch("/api/login");
-    } else {
-      Cookies.remove("jwt");
-    }
-    location.reload();
-  };
-
-  // If initial sync hasn't completed, these can be empty.
-  if (!users.length || !mediums.length) {
-    return null;
-  }
-
   const user = users.find((user) => user.id === z.userID)?.name ?? "anon";
 
   return (
@@ -214,7 +199,8 @@ function App() {
           )}
         </em>
       </div>
-      {filteredMessages.length === 0 ? (
+      {users.length === 0 ||
+      mediums.length == 0 ? null : filteredMessages.length === 0 ? (
         <h3>
           <em>No posts found 😢</em>
         </h3>
