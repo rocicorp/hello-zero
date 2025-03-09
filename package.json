@@ -8,7 +8,7 @@
     "dev:zero-cache": "zero-cache-dev -p src/schema.ts",
     "dev:db-up": "docker compose --env-file .env -f ./docker/docker-compose.yml up",
     "dev:db-down": "docker compose --env-file .env -f ./docker/docker-compose.yml down",
-    "dev:clean": "source .env && docker volume rm -f docker_zstart_pgdata && rm -rf \"${ZERO_REPLICA_FILE}\"*",
+    "dev:clean": "source .env && docker volume rm -f docker_zstart_pgdata && rm \"${ZERO_REPLICA_FILE}\".db*",
     "build": "tsc -b && vite build",
     "lint": "eslint ."
   },
