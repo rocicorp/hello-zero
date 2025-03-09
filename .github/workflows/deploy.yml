@@ -31,3 +31,6 @@ jobs:
 
       - name: SST Deploy
         run: npx sst deploy --stage=production
+
+      - name: Vercel Deploy
+        run: npx vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }} --prod --scope=rocicorp
