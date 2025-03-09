@@ -30,4 +30,4 @@ jobs:
           aws-region: us-east-1
 
       - name: SST Deploy
-        run: npx sst deploy
+        run: npx sst deploy --stage=production
