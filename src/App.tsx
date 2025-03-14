@@ -10,14 +10,21 @@ import { formatDate } from "./date";
 
 function App() {
   const z = useZero<Schema>();
-  const [users] = useQuery(z.query.user);
-  const [mediums] = useQuery(z.query.medium);
+  const [users] = useQuery(z.query.user, {
+    ttl: "forever",
+  });
+
+  const [mediums] = useQuery(z.query.medium, {
+    ttl: "forever",
+  });
 
   const [filterUser, setFilterUser] = useState<string>("");
   const [filterText, setFilterText] = useState<string>("");
 
   const all = z.query.message;
-  const [allMessages] = useQuery(all);
+  const [allMessages] = useQuery(all, {
+    ttl: "forever",
+  });
 
   let filtered = all
     .related("medium")
