@@ -40,15 +40,13 @@ export default $config({
     // Common environment variables
     const commonEnv = {
       ZERO_UPSTREAM_DB: conn.value,
-      ZERO_CVR_DB: conn.value,
-      ZERO_CHANGE_DB: conn.value,
       ZERO_AUTH_SECRET: zeroAuthSecret.value,
       ZERO_REPLICA_FILE: "sync-replica.db",
       ZERO_LITESTREAM_BACKUP_URL: $interpolate`s3://${replicationBucket.name}/backup`,
       ZERO_IMAGE_URL: `rocicorp/zero:${zeroVersion}`,
+      ZERO_CHANGE_MAX_CONNS: "3",
       ZERO_CVR_MAX_CONNS: "10",
       ZERO_UPSTREAM_MAX_CONNS: "10",
-      ZERO_AUTO_RESET: "true",
     };
 
     // Replication Manager Service
@@ -66,7 +64,6 @@ export default $config({
       },
       environment: {
         ...commonEnv,
-        ZERO_CHANGE_MAX_CONNS: "3",
         ZERO_NUM_SYNC_WORKERS: "0",
       },
       loadBalancer: {

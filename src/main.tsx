@@ -17,8 +17,6 @@ const z = new Zero({
   auth: () => encodedJWT,
   server: import.meta.env.VITE_PUBLIC_SERVER,
   schema,
-  // This is often easier to develop with if you're frequently changing
-  // the schema. Switch to 'idb' for local-persistence.
   kvStore: "idb",
 });
 
