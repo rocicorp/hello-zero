@@ -21,22 +21,19 @@ const replies = [
   "I could send you a tarball, but it won't work",
 ];
 
-export function randomMessage(
-  users: readonly User[],
-  mediums: readonly Medium[]
-): Message {
+export function randomMessage(): Message {
   const id = randID();
-  const mediumID = mediums[randInt(mediums.length)].id;
+  //const mediumID = mediums[randInt(mediums.length)].id;
   const timestamp = randBetween(1727395200000, new Date().getTime());
-  const isRequest = randInt(10) <= 6;
-  const messages = isRequest ? requests : replies;
-  const senders = users.filter((u) => u.partner === !isRequest);
-  const senderID = senders[randInt(senders.length)].id;
+  //const isRequest = randInt(10) <= 6;
+  //const messages = isRequest ? requests : replies;
+  //const senders = users.filter((u) => u.partner === !isRequest);
+  //const senderID = senders[randInt(senders.length)].id;
   return {
     id,
-    senderID,
-    mediumID,
-    body: messages[randInt(messages.length)],
+    senderID: "ycD76wW4R2",
+    mediumID: "G14bSFuNDq",
+    body: "test message",
     timestamp,
   };
 }

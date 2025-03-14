@@ -12,10 +12,12 @@ function App() {
   const z = useZero<Schema>();
   const [users] = useQuery(z.query.user, {
     ttl: "forever",
+    enabled: false,
   });
 
   const [mediums] = useQuery(z.query.medium, {
     ttl: "forever",
+    enabled: false,
   });
 
   const [filterUser, setFilterUser] = useState<string>("");
@@ -24,6 +26,7 @@ function App() {
   const all = z.query.message;
   const [allMessages] = useQuery(all, {
     ttl: "forever",
+    enabled: false,
   });
 
   let filtered = all
@@ -39,7 +42,9 @@ function App() {
     filtered = filtered.where("body", "LIKE", `%${escapeLike(filterText)}%`);
   }
 
-  const [filteredMessages] = useQuery(filtered);
+  const [filteredMessages] = useQuery(filtered, {
+    enabled: false,
+  });
 
   const hasFilters = filterUser || filterText;
   const [action, setAction] = useState<"add" | "remove" | undefined>(undefined);
@@ -56,7 +61,7 @@ function App() {
   };
 
   const addRandomMessage = () => {
-    z.mutate.message.insert(randomMessage(users, mediums));
+    z.mutate.message.insert(randomMessage());
     return true;
   };
 
@@ -137,9 +142,9 @@ function App() {
   };
 
   // If initial sync hasn't completed, these can be empty.
-  if (!users.length || !mediums.length) {
-    return null;
-  }
+  // if (!users.length || !mediums.length) {
+  //   return null;
+  // }
 
   const user = users.find((user) => user.id === z.userID)?.name ?? "anon";
 
