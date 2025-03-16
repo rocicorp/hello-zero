@@ -2,7 +2,7 @@
 // They must be equal to or a subset of the server-side schema.
 // Note the "relationships" field, which defines first-class
 // relationships between tables.
-// See https://github.com/rocicorp/mono/blob/main/apps/zbugs/src/domain/schema.ts
+// See https://github.com/rocicorp/mono/blob/main/apps/zbugs/schema.ts
 // for more complex examples, including many-to-many.
 
 import {
