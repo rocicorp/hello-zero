@@ -1,5 +1,7 @@
 # Hello Zero
 
+## Option 1: Run this repo
+
 First, install dependencies:
 
 ```sh
