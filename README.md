@@ -1,7 +1,5 @@
 # Hello Zero
 
-## Option 1: Run this repo
-
 First, install dependencies:
 
 ```sh
@@ -46,16 +44,6 @@ database.
 # Your application's data
 ZERO_UPSTREAM_DB="postgresql://user:password@127.0.0.1/mydb"
 
-# A Postgres database Zero can use for storing Client View Records (information
-# about what has been synced to which clients). Can be same as above db, but
-# nice to keep separate for cleanliness and so that it can scale separately
-# when needed.
-ZERO_CVR_DB="postgresql://user:password@127.0.0.1/mydb_cvr"
-
-# A Postgres database Zero can use for storing its own replication log. Can be
-# same as either of above, but nice to keep separate for same reason as cvr db.
-ZERO_CHANGE_DB="postgresql://user:password@127.0.0.1/mydb_cdb"
-
 # Secret to decode auth token.
 ZERO_AUTH_SECRET="secretkey"
 
@@ -78,22 +66,17 @@ npm install @rocicorp/zero
    See [schema.ts](src/schema.ts) for example:
 
 ```typescript
-import { createSchema, createTableSchema } from "@rocicorp/zero";
+import { createSchema, table, string } from "@rocicorp/zero";
 
-const userSchema = createTableSchema({
-  tableName: "user",
-  columns: {
-    id: { type: "string" },
-    name: { type: "string" },
-  },
-  primaryKey: ["id"],
-});
+const user = table("user")
+  .columns({
+    id: string(),
+    name: string(),
+  })
+  .primaryKey("id");
 
 export const schema = createSchema({
-  version: 1,
-  tables: {
-    user: userSchema,
-  },
+  tables: [user],
 });
 
 export type Schema = typeof schema;
@@ -114,7 +97,6 @@ const z = new Zero({
   auth: "your-auth-token",
   server: import.meta.env.VITE_PUBLIC_SERVER,
   schema,
-  kvStore: "mem", // or "idb" for IndexedDB persistence
 });
 
 createRoot(document.getElementById("root")!).render(
