@@ -2,7 +2,7 @@ import { useState, MouseEvent, useRef } from "react";
 import Cookies from "js-cookie";
 import { useQuery, useZero } from "@rocicorp/zero/react";
 import { escapeLike } from "@rocicorp/zero";
-import { Schema } from "./schema";
+import { schema, Schema } from "./schema";
 import { randomMessage } from "./test-data";
 import { randInt } from "./rand";
 import { useInterval } from "./use-interval";
@@ -136,6 +136,41 @@ function App() {
     location.reload();
   };
 
+  const inspect = async () => {
+    alert("Open dev tools console tab to view inspector output.");
+    const inspector = await z.inspect();
+    const client = inspector.client;
+
+    const style =
+      "background-color: darkblue; color: white; font-style: italic; font-size: 2em;";
+    console.log("%cPrinting inspector output...", style);
+    console.log(
+      "%cTo see pretty tables, leave devtools open, then press 'Inspect' button in main UI again.",
+      style
+    );
+    console.log(
+      "%cSorry this is so ghetto I was too tired to make a debug dialog.",
+      style
+    );
+
+    console.log("client:");
+    console.log(client);
+    console.log("client group:");
+    console.log(client.clientGroup);
+    console.log("client map:");
+    console.log(await client.map());
+    for (const tableName of Object.keys(schema.tables)) {
+      console.log(`table ${tableName}:`);
+      console.table(await client.rows(tableName));
+    }
+    console.log("client queries:");
+    console.table(await client.queries());
+    console.log("client group queries:");
+    console.table(await client.clientGroup.queries());
+    console.log("all clients in group");
+    console.table(await client.clientGroup.clients());
+  };
+
   // If initial sync hasn't completed, these can be empty.
   if (!users.length || !mediums.length) {
     return null;
@@ -176,6 +211,7 @@ function App() {
           <button onMouseDown={() => toggleLogin()}>
             {user === "anon" ? "Login" : "Logout"}
           </button>
+          <button onMouseDown={() => inspect()}>Inspect</button>
         </div>
       </div>
       <div className="controls">
