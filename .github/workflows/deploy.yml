@@ -3,10 +3,10 @@ name: Deploy
 on:
   push:
     branches:
-      - cesara/ci
+      - cesar/ci
 
 jobs:
-  deploy:
+  run-sst:
     runs-on: ubuntu-latest
 
     steps:
