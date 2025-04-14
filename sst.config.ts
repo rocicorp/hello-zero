@@ -114,7 +114,33 @@ export default $config({
       },
       loadBalancer: {
         public: true,
-        rules: [{ listen: "80/http", forward: "4848/http" }],
+        //set ssl https if domain name and cert are provided
+        ...(process.env.DOMAIN_NAME && process.env.DOMAIN_CERT
+          ? {
+              domain: {
+                name: process.env.DOMAIN_NAME,
+                dns: false,
+                cert: process.env.DOMAIN_CERT,
+              },
+              ports: [
+                {
+                  listen: "80/http",
+                  forward: "4848/http",
+                },
+                {
+                  listen: "443/https",
+                  forward: "4848/http",
+                },
+              ],
+            }
+          : {
+              ports: [
+                {
+                  listen: "80/http",
+                  forward: "4848/http",
+                },
+              ],
+            }),
       },
       transform: {
         target: {

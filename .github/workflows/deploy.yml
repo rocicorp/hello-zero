@@ -29,8 +29,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: SST Deploy
-        run: npx sst deploy --stage=production
+      - name: SST
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+          DOMAIN_CERT: ${{ vars.DOMAIN_CERT }}
+        run: |
+          npx sst deploy --stage production
 
       - name: Vercel Deploy
         run: npx vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }} --prod --scope=rocicorp
