@@ -15,9 +15,7 @@ export default $config({
     };
   },
   async run() {
-    const zeroVersion = execSync(
-      "npm list @rocicorp/zero | grep @rocicorp/zero | cut -f 3 -d @"
-    )
+    const zeroVersion = execSync("npm show @rocicorp/zero version")
       .toString()
       .trim();
 
