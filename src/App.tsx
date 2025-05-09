@@ -57,7 +57,6 @@ function App() {
           <RepeatButton
             onTrigger={() => {
               z.mutate.message.insert(randomMessage(users, mediums));
-              return true;
             }}
           >
             Add Messages

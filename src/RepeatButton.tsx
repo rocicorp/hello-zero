@@ -2,9 +2,9 @@ import React from "react";
 
 interface RepeatButtonProps extends React.ComponentProps<"button"> {
   /**
-   * Return `true` to continue repeating, `false` to stop
+   * Return `true` / `void` to continue repeating, `false` to stop
    */
-  onTrigger: () => boolean;
+  onTrigger: () => boolean | void;
 }
 const INITIAL_HOLD_DELAY_MS = 300;
 const HOLD_INTERVAL_MS = 1000 / 60;
