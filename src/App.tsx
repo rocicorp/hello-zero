@@ -18,8 +18,8 @@ function App() {
     ttl: "forever",
   });
 
-  const [filterUser, setFilterUser] = useState<string>("");
-  const [filterText, setFilterText] = useState<string>("");
+  const [filterUser, setFilterUser] = useState("");
+  const [filterText, setFilterText] = useState("");
 
   const all = z.query.message;
   const [allMessages] = useQuery(all, {
