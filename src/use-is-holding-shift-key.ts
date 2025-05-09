@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-export function useIsHoldingShift() {
-  const [isHoldingShift, setIsHoldingShift] = useState(false);
+export function useIsHoldingShiftKey() {
+  const [isHoldingShiftKey, setIsHoldingShift] = useState(false);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -16,5 +16,5 @@ export function useIsHoldingShift() {
     };
   }, []);
 
-  return isHoldingShift;
+  return isHoldingShiftKey;
 }

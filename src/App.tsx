@@ -4,10 +4,10 @@ import Cookies from "js-cookie";
 import { useState } from "react";
 import { formatDate } from "./date";
 import { randInt } from "./rand";
-import { RepeatButton } from "./RepeatButton";
+import { RepeatButton } from "./repeat-button";
 import { schema, Schema } from "./schema";
 import { randomMessage } from "./test-data";
-import { useIsHoldingShift } from "./useIsHoldingShift";
+import { useIsHoldingShiftKey } from "./use-is-holding-shift-key";
 
 function App() {
   const z = useZero<Schema>();
@@ -44,7 +44,8 @@ function App() {
 
   const hasFilters = filterUser || filterText;
 
-  const isHoldingShift = useIsHoldingShift();
+  const isHoldingShiftKey = useIsHoldingShiftKey();
+
   // If initial sync hasn't completed, these can be empty.
   if (!users.length || !mediums.length) {
     return null;
@@ -65,7 +66,7 @@ function App() {
           </RepeatButton>
           <RepeatButton
             onTrigger={() => {
-              if (!viewer && !isHoldingShift) {
+              if (!viewer && !isHoldingShiftKey) {
                 alert(
                   "You must be logged in to delete. Hold shift to try anyway."
                 );
