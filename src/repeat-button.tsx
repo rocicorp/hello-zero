@@ -1,10 +1,12 @@
 import React from "react";
 
+type ClickEvent = React.MouseEvent | React.TouchEvent;
+
 interface RepeatButtonProps extends React.ComponentProps<"button"> {
   /**
    * Return `true` / `void` to continue repeating, `false` to stop
    */
-  onTrigger: () => boolean | void;
+  onTrigger: (originalEvent: ClickEvent) => boolean | void;
 }
 const INITIAL_HOLD_DELAY_MS = 300;
 const HOLD_INTERVAL_MS = 1000 / 60;
@@ -13,7 +15,14 @@ const HOLD_INTERVAL_MS = 1000 / 60;
  * A `<button>` that repeats an action when held down
  */
 export function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
-  const [enabled, setEnabled] = React.useState(false);
+  const [state, setState] = React.useState<{
+    enabled: true;
+    event: ClickEvent;
+  } | {
+    enabled: false;
+  }>({
+    enabled: false,
+  });
 
   const onTriggerRef = React.useRef(onTrigger);
   React.useEffect(() => {
@@ -21,17 +30,20 @@ export function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
   }, [onTrigger]);
 
   React.useEffect(() => {
-    if (!enabled) {
+    
+    
+    if (!state.enabled) {
       return;
     }
+    const {event} = state;
 
-    if (onTriggerRef.current() === false) {
+    if (onTriggerRef.current(event) === false) {
       return;
     }
 
     let timer = setTimeout(() => {
       function onTick() {
-        if (onTriggerRef.current() !== false) {
+        if (onTriggerRef.current(event) !== false) {
           timer = setTimeout(onTick, HOLD_INTERVAL_MS);
         }
       }
@@ -41,29 +53,41 @@ export function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
     return () => {
       clearTimeout(timer);
     };
-  }, [enabled]);
+  }, [state]);
 
   return (
     <button
       {...props}
       onMouseDown={(e) => {
-        setEnabled(true);
+        setState({
+            enabled: true,
+            event: e,
+          });
         props.onMouseDown?.(e);
       }}
       onMouseUp={(e) => {
-        setEnabled(false);
+        setState({
+          enabled: false,
+        });
         props.onMouseUp?.(e);
       }}
       onMouseLeave={(e) => {
-        setEnabled(false);
+        setState({
+          enabled: false,
+        });
         props.onMouseLeave?.(e);
       }}
       onTouchStart={(e) => {
-        setEnabled(true);
+        setState({
+          enabled: true,
+          event: e,
+        });
         props.onTouchStart?.(e);
       }}
       onTouchEnd={(e) => {
-        setEnabled(false);
+        setState({
+          enabled: false,
+        });
         props.onTouchEnd?.(e);
       }}
     />
