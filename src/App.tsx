@@ -1,73 +1,12 @@
 import { escapeLike } from "@rocicorp/zero";
 import { useQuery, useZero } from "@rocicorp/zero/react";
 import Cookies from "js-cookie";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { formatDate } from "./date";
 import { randInt } from "./rand";
+import { RepeatButton } from "./RepeatButton";
 import { schema, Schema } from "./schema";
 import { randomMessage } from "./test-data";
-
-interface RepeatButtonProps extends React.ComponentProps<"button"> {
-  onTrigger: () => void;
-}
-const INITIAL_HOLD_DELAY_MS = 300;
-const HOLD_INTERVAL_MS = 1000 / 60;
-
-/**
- * A button that repeats an action when held down
- */
-function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
-  const [enabled, setEnabled] = useState(false);
-
-  const onTriggerRef = useRef(onTrigger);
-  useEffect(() => {
-    onTriggerRef.current = onTrigger;
-  }, [onTrigger]);
-
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
-    onTriggerRef.current();
-
-    let interval: ReturnType<typeof setInterval> | undefined = undefined;
-    const timer = setTimeout(() => {
-      interval = setInterval(() => onTriggerRef.current(), HOLD_INTERVAL_MS);
-    }, INITIAL_HOLD_DELAY_MS);
-
-    return () => {
-      clearTimeout(timer);
-      clearInterval(interval);
-    };
-  }, [enabled]);
-
-  return (
-    <button
-      {...props}
-      onMouseDown={(e) => {
-        setEnabled(true);
-        props.onMouseDown?.(e);
-      }}
-      onMouseUp={(e) => {
-        setEnabled(false);
-        props.onMouseUp?.(e);
-      }}
-      onMouseLeave={(e) => {
-        setEnabled(false);
-        props.onMouseLeave?.(e);
-      }}
-      onTouchStart={(e) => {
-        setEnabled(true);
-        props.onTouchStart?.(e);
-      }}
-      onTouchEnd={(e) => {
-        setEnabled(false);
-        props.onTouchEnd?.(e);
-      }}
-    />
-  );
-}
 
 function App() {
   const z = useZero<Schema>();
@@ -104,50 +43,6 @@ function App() {
 
   const hasFilters = filterUser || filterText;
 
-  const toggleLogin = async () => {
-    if (z.userID === "anon") {
-      await fetch("/api/login");
-    } else {
-      Cookies.remove("jwt");
-    }
-    location.reload();
-  };
-
-  const inspect = async () => {
-    alert("Open dev tools console tab to view inspector output.");
-    const inspector = await z.inspect();
-    const client = inspector.client;
-
-    const style =
-      "background-color: darkblue; color: white; font-style: italic; font-size: 2em;";
-    console.log("%cPrinting inspector output...", style);
-    console.log(
-      "%cTo see pretty tables, leave devtools open, then press 'Inspect' button in main UI again.",
-      style
-    );
-    console.log(
-      "%cSorry this is so ghetto I was too tired to make a debug dialog.",
-      style
-    );
-
-    console.log("client:");
-    console.log(client);
-    console.log("client group:");
-    console.log(client.clientGroup);
-    console.log("client map:");
-    console.log(await client.map());
-    for (const tableName of Object.keys(schema.tables)) {
-      console.log(`table ${tableName}:`);
-      console.table(await client.rows(tableName));
-    }
-    console.log("client queries:");
-    console.table(await client.queries());
-    console.log("client group queries:");
-    console.table(await client.clientGroup.queries());
-    console.log("all clients in group");
-    console.table(await client.clientGroup.clients());
-  };
-
   // If initial sync hasn't completed, these can be empty.
   if (!users.length || !mediums.length) {
     return null;
@@ -162,6 +57,7 @@ function App() {
           <RepeatButton
             onTrigger={() => {
               z.mutate.message.insert(randomMessage(users, mediums));
+              return true;
             }}
           >
             Add Messages
@@ -169,10 +65,12 @@ function App() {
           <RepeatButton
             onTrigger={() => {
               if (allMessages.length === 0) {
+                alert("No messages to remove");
                 return false;
               }
               const index = randInt(allMessages.length);
               z.mutate.message.delete({ id: allMessages[index].id });
+              return true;
             }}
           >
             Remove Messages
@@ -185,10 +83,63 @@ function App() {
           }}
         >
           {user === "anon" ? "" : `Logged in as ${user}`}
-          <button onMouseDown={() => toggleLogin()}>
+          <button
+            onMouseDown={() => {
+              if (user !== "anon") {
+                Cookies.remove("jwt");
+                location.reload();
+                return;
+              }
+
+              fetch("/api/login")
+                .then(() => {
+                  location.reload();
+                })
+                .catch((error) => {
+                  alert(`Failed to login: ${error.message}`);
+                });
+            }}
+          >
             {user === "anon" ? "Login" : "Logout"}
           </button>
-          <button onMouseDown={() => inspect()}>Inspect</button>
+          <button
+            onMouseDown={async () => {
+              alert("Open dev tools console tab to view inspector output.");
+              const inspector = await z.inspect();
+              const client = inspector.client;
+
+              const style =
+                "background-color: darkblue; color: white; font-style: italic; font-size: 2em;";
+              console.log("%cPrinting inspector output...", style);
+              console.log(
+                "%cTo see pretty tables, leave devtools open, then press 'Inspect' button in main UI again.",
+                style
+              );
+              console.log(
+                "%cSorry this is so ghetto I was too tired to make a debug dialog.",
+                style
+              );
+
+              console.log("client:");
+              console.log(client);
+              console.log("client group:");
+              console.log(client.clientGroup);
+              console.log("client map:");
+              console.log(await client.map());
+              for (const tableName of Object.keys(schema.tables)) {
+                console.log(`table ${tableName}:`);
+                console.table(await client.rows(tableName));
+              }
+              console.log("client queries:");
+              console.table(await client.queries());
+              console.log("client group queries:");
+              console.table(await client.clientGroup.queries());
+              console.log("all clients in group");
+              console.table(await client.clientGroup.clients());
+            }}
+          >
+            Inspect
+          </button>
         </div>
       </div>
       <div className="controls">
