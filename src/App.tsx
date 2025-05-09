@@ -1,12 +1,73 @@
-import { useState, MouseEvent, useRef } from "react";
-import Cookies from "js-cookie";
-import { useQuery, useZero } from "@rocicorp/zero/react";
 import { escapeLike } from "@rocicorp/zero";
+import { useQuery, useZero } from "@rocicorp/zero/react";
+import Cookies from "js-cookie";
+import { useEffect, useRef, useState } from "react";
+import { formatDate } from "./date";
+import { randInt } from "./rand";
 import { schema, Schema } from "./schema";
 import { randomMessage } from "./test-data";
-import { randInt } from "./rand";
-import { useInterval } from "./use-interval";
-import { formatDate } from "./date";
+
+interface RepeatButtonProps extends React.ComponentProps<"button"> {
+  onTrigger: () => void;
+}
+const INITIAL_HOLD_DELAY_MS = 300;
+const HOLD_INTERVAL_MS = 1000 / 60;
+
+/**
+ * A button that repeats an action when held down
+ */
+function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
+  const [enabled, setEnabled] = useState(false);
+
+  const onTriggerRef = useRef(onTrigger);
+  useEffect(() => {
+    onTriggerRef.current = onTrigger;
+  }, [onTrigger]);
+
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    onTriggerRef.current();
+
+    let interval: ReturnType<typeof setInterval> | undefined = undefined;
+    const timer = setTimeout(() => {
+      interval = setInterval(() => onTriggerRef.current(), HOLD_INTERVAL_MS);
+    }, INITIAL_HOLD_DELAY_MS);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [enabled]);
+
+  return (
+    <button
+      {...props}
+      onMouseDown={(e) => {
+        setEnabled(true);
+        props.onMouseDown?.(e);
+      }}
+      onMouseUp={(e) => {
+        setEnabled(false);
+        props.onMouseUp?.(e);
+      }}
+      onMouseLeave={(e) => {
+        setEnabled(false);
+        props.onMouseLeave?.(e);
+      }}
+      onTouchStart={(e) => {
+        setEnabled(true);
+        props.onTouchStart?.(e);
+      }}
+      onTouchEnd={(e) => {
+        setEnabled(false);
+        props.onTouchEnd?.(e);
+      }}
+    />
+  );
+}
 
 function App() {
   const z = useZero<Schema>();
@@ -42,90 +103,6 @@ function App() {
   const [filteredMessages] = useQuery(filtered);
 
   const hasFilters = filterUser || filterText;
-  const [action, setAction] = useState<"add" | "remove" | undefined>(undefined);
-  const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const deleteRandomMessage = () => {
-    if (allMessages.length === 0) {
-      return false;
-    }
-    const index = randInt(allMessages.length);
-    z.mutate.message.delete({ id: allMessages[index].id });
-
-    return true;
-  };
-
-  const addRandomMessage = () => {
-    z.mutate.message.insert(randomMessage(users, mediums));
-    return true;
-  };
-
-  const handleAction = () => {
-    if (action === "add") {
-      return addRandomMessage();
-    } else if (action === "remove") {
-      return deleteRandomMessage();
-    }
-
-    return false;
-  };
-
-  useInterval(
-    () => {
-      if (!handleAction()) {
-        setAction(undefined);
-      }
-    },
-    action !== undefined ? 1000 / 60 : null
-  );
-
-  const INITIAL_HOLD_DELAY_MS = 300;
-  const handleAddAction = () => {
-    addRandomMessage();
-    holdTimerRef.current = setTimeout(() => {
-      setAction("add");
-    }, INITIAL_HOLD_DELAY_MS);
-  };
-
-  const handleRemoveAction = (e: MouseEvent | React.TouchEvent) => {
-    if (z.userID === "anon" && "shiftKey" in e && !e.shiftKey) {
-      alert("You must be logged in to delete. Hold shift to try anyway.");
-      return;
-    }
-    deleteRandomMessage();
-
-    holdTimerRef.current = setTimeout(() => {
-      setAction("remove");
-    }, INITIAL_HOLD_DELAY_MS);
-  };
-
-  const stopAction = () => {
-    if (holdTimerRef.current) {
-      clearTimeout(holdTimerRef.current);
-      holdTimerRef.current = null;
-    }
-
-    setAction(undefined);
-  };
-
-  const editMessage = (
-    e: MouseEvent,
-    id: string,
-    senderID: string,
-    prev: string
-  ) => {
-    if (senderID !== z.userID && !e.shiftKey) {
-      alert(
-        "You aren't logged in as the sender of this message. Editing won't be permitted. Hold the shift key to try anyway."
-      );
-      return;
-    }
-    const body = prompt("Edit message", prev);
-    z.mutate.message.update({
-      id,
-      body: body ?? prev,
-    });
-  };
 
   const toggleLogin = async () => {
     if (z.userID === "anon") {
@@ -182,24 +159,24 @@ function App() {
     <>
       <div className="controls">
         <div>
-          <button
-            onMouseDown={handleAddAction}
-            onMouseUp={stopAction}
-            onMouseLeave={stopAction}
-            onTouchStart={handleAddAction}
-            onTouchEnd={stopAction}
+          <RepeatButton
+            onTrigger={() => {
+              z.mutate.message.insert(randomMessage(users, mediums));
+            }}
           >
             Add Messages
-          </button>
-          <button
-            onMouseDown={handleRemoveAction}
-            onMouseUp={stopAction}
-            onMouseLeave={stopAction}
-            onTouchStart={handleRemoveAction}
-            onTouchEnd={stopAction}
+          </RepeatButton>
+          <RepeatButton
+            onTrigger={() => {
+              if (allMessages.length === 0) {
+                return false;
+              }
+              const index = randInt(allMessages.length);
+              z.mutate.message.delete({ id: allMessages[index].id });
+            }}
           >
             Remove Messages
-          </button>
+          </RepeatButton>
           <em>(hold down buttons to repeat)</em>
         </div>
         <div
@@ -280,9 +257,23 @@ function App() {
                 <td align="left">{message.body}</td>
                 <td align="right">{formatDate(message.timestamp)}</td>
                 <td
-                  onMouseDown={(e) =>
-                    editMessage(e, message.id, message.senderID, message.body)
-                  }
+                  onMouseDown={(e) => {
+                    if (message.senderID !== z.userID && !e.shiftKey) {
+                      alert(
+                        "You aren't logged in as the sender of this message. Editing won't be permitted. Hold the shift key to try anyway."
+                      );
+                      return;
+                    }
+
+                    const body = prompt("Edit message", message.body);
+                    if (body === null) {
+                      return;
+                    }
+                    z.mutate.message.update({
+                      id: message.id,
+                      body,
+                    });
+                  }}
                 >
                   ✏️
                 </td>
