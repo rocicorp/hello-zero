@@ -7,6 +7,7 @@ import { randInt } from "./rand";
 import { RepeatButton } from "./RepeatButton";
 import { schema, Schema } from "./schema";
 import { randomMessage } from "./test-data";
+import { useIsHoldingShift } from "./useIsHoldingShift";
 
 function App() {
   const z = useZero<Schema>();
@@ -43,12 +44,13 @@ function App() {
 
   const hasFilters = filterUser || filterText;
 
+  const isHoldingShift = useIsHoldingShift();
   // If initial sync hasn't completed, these can be empty.
   if (!users.length || !mediums.length) {
     return null;
   }
 
-  const viewer = users.find((user) => user.id === z.userID)
+  const viewer = users.find((user) => user.id === z.userID);
 
   return (
     <>
@@ -63,10 +65,17 @@ function App() {
           </RepeatButton>
           <RepeatButton
             onTrigger={() => {
+              if (!viewer && !isHoldingShift) {
+                alert(
+                  "You must be logged in to delete. Hold shift to try anyway."
+                );
+                return false;
+              }
               if (allMessages.length === 0) {
                 alert("No messages to remove");
                 return false;
               }
+
               const index = randInt(allMessages.length);
               z.mutate.message.delete({ id: allMessages[index].id });
               return true;
@@ -85,8 +94,8 @@ function App() {
           {viewer ? (
             <button
               onMouseDown={() => {
-                  Cookies.remove("jwt");
-                  location.reload();
+                Cookies.remove("jwt");
+                location.reload();
               }}
             >
               Logout
