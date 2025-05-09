@@ -48,7 +48,7 @@ function App() {
     return null;
   }
 
-  const currentUser = users.find((user) => user.id === z.userID)
+  const viewer = users.find((user) => user.id === z.userID)
 
   return (
     <>
@@ -81,8 +81,8 @@ function App() {
             justifyContent: "end",
           }}
         >
-          {currentUser && `Logged in as ${currentUser.name}`}
-          {currentUser ? (
+          {viewer && `Logged in as ${viewer.name}`}
+          {viewer ? (
             <button
               onMouseDown={() => {
                   Cookies.remove("jwt");
