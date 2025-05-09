@@ -41,13 +41,17 @@ export function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
     };
   }, [event]);
 
+  function start(e: DownEvent) {
+    if (onTriggerRef.current(e) !== false) {
+      setEvent(e);
+    }
+  }
+
   return (
     <button
       {...props}
       onMouseDown={(e) => {
-        if (onTriggerRef.current(e) !== false) {
-          setEvent(e);
-        }
+        start(e);
         props.onMouseDown?.(e);
       }}
       onMouseUp={(e) => {
@@ -59,9 +63,7 @@ export function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
         props.onMouseLeave?.(e);
       }}
       onTouchStart={(e) => {
-        if (onTriggerRef.current(e) !== false) {
-          setEvent(e);
-        }
+        start(e);
         props.onTouchStart?.(e);
       }}
       onTouchEnd={(e) => {
