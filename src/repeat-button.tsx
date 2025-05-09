@@ -15,12 +15,15 @@ const HOLD_INTERVAL_MS = 1000 / 60;
  * A `<button>` that repeats an action when held down
  */
 export function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
-  const [state, setState] = React.useState<{
-    enabled: true;
-    event: ClickEvent;
-  } | {
-    enabled: false;
-  }>({
+  const [state, setState] = React.useState<
+    | {
+        enabled: true;
+        event: ClickEvent;
+      }
+    | {
+        enabled: false;
+      }
+  >({
     enabled: false,
   });
 
@@ -30,12 +33,10 @@ export function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
   }, [onTrigger]);
 
   React.useEffect(() => {
-    
-    
     if (!state.enabled) {
       return;
     }
-    const {event} = state;
+    const { event } = state;
 
     if (onTriggerRef.current(event) === false) {
       return;
@@ -60,9 +61,9 @@ export function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
       {...props}
       onMouseDown={(e) => {
         setState({
-            enabled: true,
-            event: e,
-          });
+          enabled: true,
+          event: e,
+        });
         props.onMouseDown?.(e);
       }}
       onMouseUp={(e) => {
