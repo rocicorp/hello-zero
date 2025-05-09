@@ -1,12 +1,12 @@
 import React from "react";
 
-type ClickEvent = React.MouseEvent | React.TouchEvent;
+type DownEvent = React.MouseEvent | React.TouchEvent;
 
 interface RepeatButtonProps extends React.ComponentProps<"button"> {
   /**
    * Return `true` / `void` to continue repeating, `false` to stop
    */
-  onTrigger: (originalEvent: ClickEvent) => boolean | void;
+  onTrigger: (originalEvent: DownEvent) => boolean | void;
 }
 const INITIAL_HOLD_DELAY_MS = 300;
 const HOLD_INTERVAL_MS = 1000 / 60;
@@ -18,7 +18,7 @@ export function RepeatButton({ onTrigger, ...props }: RepeatButtonProps) {
   const [state, setState] = React.useState<
     | {
         enabled: true;
-        event: ClickEvent;
+        event: DownEvent;
       }
     | {
         enabled: false;
