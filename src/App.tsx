@@ -48,7 +48,7 @@ function App() {
     return null;
   }
 
-  const user = users.find((user) => user.id === z.userID)?.name ?? "anon";
+  const currentUser = users.find((user) => user.id === z.userID)
 
   return (
     <>
@@ -81,26 +81,31 @@ function App() {
             justifyContent: "end",
           }}
         >
-          {user === "anon" ? "" : `Logged in as ${user}`}
-          <button
-            onMouseDown={() => {
-              if (user !== "anon") {
-                Cookies.remove("jwt");
-                location.reload();
-                return;
-              }
-
-              fetch("/api/login")
-                .then(() => {
+          {currentUser && `Logged in as ${currentUser.name}`}
+          {currentUser ? (
+            <button
+              onMouseDown={() => {
+                  Cookies.remove("jwt");
                   location.reload();
-                })
-                .catch((error) => {
-                  alert(`Failed to login: ${error.message}`);
-                });
-            }}
-          >
-            {user === "anon" ? "Login" : "Logout"}
-          </button>
+              }}
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onMouseDown={() => {
+                fetch("/api/login")
+                  .then(() => {
+                    location.reload();
+                  })
+                  .catch((error) => {
+                    alert(`Failed to login: ${error.message}`);
+                  });
+              }}
+            >
+              Login
+            </button>
+          )}
           <button
             onMouseDown={async () => {
               alert("Open dev tools console tab to view inspector output.");
