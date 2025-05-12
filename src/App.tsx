@@ -1,12 +1,12 @@
-import { useState, MouseEvent, useRef } from "react";
-import Cookies from "js-cookie";
-import { useQuery, useZero } from "@rocicorp/zero/react";
 import { escapeLike } from "@rocicorp/zero";
+import { useQuery, useZero } from "@rocicorp/zero/react";
+import Cookies from "js-cookie";
+import { useState } from "react";
+import { formatDate } from "./date";
+import { randInt } from "./rand";
+import { RepeatButton } from "./repeat-button";
 import { schema, Schema } from "./schema";
 import { randomMessage } from "./test-data";
-import { randInt } from "./rand";
-import { useInterval } from "./use-interval";
-import { formatDate } from "./date";
 
 function App() {
   const z = useZero<Schema>();
@@ -18,8 +18,8 @@ function App() {
     ttl: "forever",
   });
 
-  const [filterUser, setFilterUser] = useState<string>("");
-  const [filterText, setFilterText] = useState<string>("");
+  const [filterUser, setFilterUser] = useState("");
+  const [filterText, setFilterText] = useState("");
 
   const all = z.query.message;
   const [allMessages] = useQuery(all, {
@@ -42,164 +42,45 @@ function App() {
   const [filteredMessages] = useQuery(filtered);
 
   const hasFilters = filterUser || filterText;
-  const [action, setAction] = useState<"add" | "remove" | undefined>(undefined);
-  const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const deleteRandomMessage = () => {
-    if (allMessages.length === 0) {
-      return false;
-    }
-    const index = randInt(allMessages.length);
-    z.mutate.message.delete({ id: allMessages[index].id });
-
-    return true;
-  };
-
-  const addRandomMessage = () => {
-    z.mutate.message.insert(randomMessage(users, mediums));
-    return true;
-  };
-
-  const handleAction = () => {
-    if (action === "add") {
-      return addRandomMessage();
-    } else if (action === "remove") {
-      return deleteRandomMessage();
-    }
-
-    return false;
-  };
-
-  useInterval(
-    () => {
-      if (!handleAction()) {
-        setAction(undefined);
-      }
-    },
-    action !== undefined ? 1000 / 60 : null
-  );
-
-  const INITIAL_HOLD_DELAY_MS = 300;
-  const handleAddAction = () => {
-    addRandomMessage();
-    holdTimerRef.current = setTimeout(() => {
-      setAction("add");
-    }, INITIAL_HOLD_DELAY_MS);
-  };
-
-  const handleRemoveAction = (e: MouseEvent | React.TouchEvent) => {
-    if (z.userID === "anon" && "shiftKey" in e && !e.shiftKey) {
-      alert("You must be logged in to delete. Hold shift to try anyway.");
-      return;
-    }
-    deleteRandomMessage();
-
-    holdTimerRef.current = setTimeout(() => {
-      setAction("remove");
-    }, INITIAL_HOLD_DELAY_MS);
-  };
-
-  const stopAction = () => {
-    if (holdTimerRef.current) {
-      clearTimeout(holdTimerRef.current);
-      holdTimerRef.current = null;
-    }
-
-    setAction(undefined);
-  };
-
-  const editMessage = (
-    e: MouseEvent,
-    id: string,
-    senderID: string,
-    prev: string
-  ) => {
-    if (senderID !== z.userID && !e.shiftKey) {
-      alert(
-        "You aren't logged in as the sender of this message. Editing won't be permitted. Hold the shift key to try anyway."
-      );
-      return;
-    }
-    const body = prompt("Edit message", prev);
-    z.mutate.message.update({
-      id,
-      body: body ?? prev,
-    });
-  };
-
-  const toggleLogin = async () => {
-    if (z.userID === "anon") {
-      await fetch("/api/login");
-    } else {
-      Cookies.remove("jwt");
-    }
-    location.reload();
-  };
-
-  const inspect = async () => {
-    alert("Open dev tools console tab to view inspector output.");
-    const inspector = await z.inspect();
-    const client = inspector.client;
-
-    const style =
-      "background-color: darkblue; color: white; font-style: italic; font-size: 2em;";
-    console.log("%cPrinting inspector output...", style);
-    console.log(
-      "%cTo see pretty tables, leave devtools open, then press 'Inspect' button in main UI again.",
-      style
-    );
-    console.log(
-      "%cSorry this is so ghetto I was too tired to make a debug dialog.",
-      style
-    );
-
-    console.log("client:");
-    console.log(client);
-    console.log("client group:");
-    console.log(client.clientGroup);
-    console.log("client map:");
-    console.log(await client.map());
-    for (const tableName of Object.keys(schema.tables)) {
-      console.log(`table ${tableName}:`);
-      console.table(await client.rows(tableName));
-    }
-    console.log("client queries:");
-    console.table(await client.queries());
-    console.log("client group queries:");
-    console.table(await client.clientGroup.queries());
-    console.log("all clients in group");
-    console.table(await client.clientGroup.clients());
-  };
 
   // If initial sync hasn't completed, these can be empty.
   if (!users.length || !mediums.length) {
     return null;
   }
 
-  const user = users.find((user) => user.id === z.userID)?.name ?? "anon";
+  const viewer = users.find((user) => user.id === z.userID);
 
   return (
     <>
       <div className="controls">
         <div>
-          <button
-            onMouseDown={handleAddAction}
-            onMouseUp={stopAction}
-            onMouseLeave={stopAction}
-            onTouchStart={handleAddAction}
-            onTouchEnd={stopAction}
+          <RepeatButton
+            onTrigger={() => {
+              z.mutate.message.insert(randomMessage(users, mediums));
+            }}
           >
             Add Messages
-          </button>
-          <button
-            onMouseDown={handleRemoveAction}
-            onMouseUp={stopAction}
-            onMouseLeave={stopAction}
-            onTouchStart={handleRemoveAction}
-            onTouchEnd={stopAction}
+          </RepeatButton>
+          <RepeatButton
+            onTrigger={(e) => {
+              if (!viewer && !e.shiftKey) {
+                alert(
+                  "You must be logged in to delete. Hold shift to try anyway."
+                );
+                return false;
+              }
+              if (allMessages.length === 0) {
+                alert("No messages to remove");
+                return false;
+              }
+
+              const index = randInt(allMessages.length);
+              z.mutate.message.delete({ id: allMessages[index].id });
+              return true;
+            }}
           >
             Remove Messages
-          </button>
+          </RepeatButton>
           <em>(hold down buttons to repeat)</em>
         </div>
         <div
@@ -207,11 +88,69 @@ function App() {
             justifyContent: "end",
           }}
         >
-          {user === "anon" ? "" : `Logged in as ${user}`}
-          <button onMouseDown={() => toggleLogin()}>
-            {user === "anon" ? "Login" : "Logout"}
+          {viewer && `Logged in as ${viewer.name}`}
+          {viewer ? (
+            <button
+              onMouseDown={() => {
+                Cookies.remove("jwt");
+                location.reload();
+              }}
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onMouseDown={() => {
+                fetch("/api/login")
+                  .then(() => {
+                    location.reload();
+                  })
+                  .catch((error) => {
+                    alert(`Failed to login: ${error.message}`);
+                  });
+              }}
+            >
+              Login
+            </button>
+          )}
+          <button
+            onMouseDown={async () => {
+              alert("Open dev tools console tab to view inspector output.");
+              const inspector = await z.inspect();
+              const client = inspector.client;
+
+              const style =
+                "background-color: darkblue; color: white; font-style: italic; font-size: 2em;";
+              console.log("%cPrinting inspector output...", style);
+              console.log(
+                "%cTo see pretty tables, leave devtools open, then press 'Inspect' button in main UI again.",
+                style
+              );
+              console.log(
+                "%cSorry this is so ghetto I was too tired to make a debug dialog.",
+                style
+              );
+
+              console.log("client:");
+              console.log(client);
+              console.log("client group:");
+              console.log(client.clientGroup);
+              console.log("client map:");
+              console.log(await client.map());
+              for (const tableName of Object.keys(schema.tables)) {
+                console.log(`table ${tableName}:`);
+                console.table(await client.rows(tableName));
+              }
+              console.log("client queries:");
+              console.table(await client.queries());
+              console.log("client group queries:");
+              console.table(await client.clientGroup.queries());
+              console.log("all clients in group");
+              console.table(await client.clientGroup.clients());
+            }}
+          >
+            Inspect
           </button>
-          <button onMouseDown={() => inspect()}>Inspect</button>
         </div>
       </div>
       <div className="controls">
@@ -280,9 +219,23 @@ function App() {
                 <td align="left">{message.body}</td>
                 <td align="right">{formatDate(message.timestamp)}</td>
                 <td
-                  onMouseDown={(e) =>
-                    editMessage(e, message.id, message.senderID, message.body)
-                  }
+                  onMouseDown={(e) => {
+                    if (message.senderID !== z.userID && !e.shiftKey) {
+                      alert(
+                        "You aren't logged in as the sender of this message. Editing won't be permitted. Hold the shift key to try anyway."
+                      );
+                      return;
+                    }
+
+                    const body = prompt("Edit message", message.body);
+                    if (body === null) {
+                      return;
+                    }
+                    z.mutate.message.update({
+                      id: message.id,
+                      body,
+                    });
+                  }}
                 >
                   ✏️
                 </td>
