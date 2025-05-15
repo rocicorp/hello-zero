@@ -40,7 +40,6 @@ export default $config({
       ZERO_UPSTREAM_DB: conn.value,
       ZERO_AUTH_SECRET: zeroAuthSecret.value,
       ZERO_REPLICA_FILE: "sync-replica.db",
-      ZERO_LITESTREAM_BACKUP_URL: $interpolate`s3://${replicationBucket.name}/backup`,
       ZERO_IMAGE_URL: `rocicorp/zero:${zeroVersion}`,
       ZERO_CHANGE_MAX_CONNS: "3",
       ZERO_CVR_MAX_CONNS: "10",
@@ -62,21 +61,10 @@ export default $config({
       },
       environment: {
         ...commonEnv,
+        ZERO_LITESTREAM_BACKUP_URL: $interpolate`s3://${replicationBucket.name}/backup`,
         ZERO_NUM_SYNC_WORKERS: "0",
       },
-      loadBalancer: {
-        public: false,
-        ports: [
-          {
-            listen: "80/http",
-            forward: "4849/http",
-          },
-        ],
-      },
       transform: {
-        loadBalancer: {
-          idleTimeout: 3600,
-        },
         target: {
           healthCheck: {
             enabled: true,
@@ -105,7 +93,7 @@ export default $config({
       },
       environment: {
         ...commonEnv,
-        ZERO_CHANGE_STREAMER_URI: replicationManager.url,
+        ZERO_CHANGE_STREAMER_MODE: "discover",
       },
       logging: {
         retention: "1 month",
