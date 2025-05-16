@@ -20,7 +20,6 @@ declare module "sst" {
     "replication-manager": {
       "service": string
       "type": "sst.aws.Service"
-      "url": string
     }
     "view-syncer": {
       "service": string
