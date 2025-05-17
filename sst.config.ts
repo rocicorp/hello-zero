@@ -53,6 +53,7 @@ export default $config({
       architecture: "arm64",
       image: commonEnv.ZERO_IMAGE_URL,
       link: [replicationBucket],
+      wait: true,
       health: {
         command: ["CMD-SHELL", "curl -f http://localhost:4849/ || exit 1"],
         interval: "5 seconds",
@@ -79,74 +80,82 @@ export default $config({
     });
 
     // View Syncer Service
-    const viewSyncer = cluster.addService(`view-syncer`, {
-      cpu: "1 vCPU",
-      memory: "2 GB",
-      architecture: "arm64",
-      image: commonEnv.ZERO_IMAGE_URL,
-      link: [replicationBucket],
-      health: {
-        command: ["CMD-SHELL", "curl -f http://localhost:4848/ || exit 1"],
-        interval: "5 seconds",
-        retries: 3,
-        startPeriod: "300 seconds",
-      },
-      environment: {
-        ...commonEnv,
-        ZERO_CHANGE_STREAMER_MODE: "discover",
-      },
-      logging: {
-        retention: "1 month",
-      },
-      loadBalancer: {
-        public: true,
-        //set ssl https if domain name and cert are provided
-        ...(process.env.DOMAIN_NAME && process.env.DOMAIN_CERT
-          ? {
-              domain: {
-                name: process.env.DOMAIN_NAME,
-                dns: false,
-                cert: process.env.DOMAIN_CERT,
-              },
-              ports: [
-                {
-                  listen: "80/http",
-                  forward: "4848/http",
+    const viewSyncer = cluster.addService(
+      `view-syncer`,
+      {
+        cpu: "1 vCPU",
+        memory: "2 GB",
+        architecture: "arm64",
+        image: commonEnv.ZERO_IMAGE_URL,
+        link: [replicationBucket],
+        health: {
+          command: ["CMD-SHELL", "curl -f http://localhost:4848/ || exit 1"],
+          interval: "5 seconds",
+          retries: 3,
+          startPeriod: "300 seconds",
+        },
+        environment: {
+          ...commonEnv,
+          ZERO_CHANGE_STREAMER_MODE: "discover",
+        },
+        logging: {
+          retention: "1 month",
+        },
+        loadBalancer: {
+          public: true,
+          //set ssl https if domain name and cert are provided
+          ...(process.env.DOMAIN_NAME && process.env.DOMAIN_CERT
+            ? {
+                domain: {
+                  name: process.env.DOMAIN_NAME,
+                  dns: false,
+                  cert: process.env.DOMAIN_CERT,
                 },
-                {
-                  listen: "443/https",
-                  forward: "4848/http",
-                },
-              ],
-            }
-          : {
-              ports: [
-                {
-                  listen: "80/http",
-                  forward: "4848/http",
-                },
-              ],
-            }),
-      },
-      transform: {
-        target: {
-          healthCheck: {
-            enabled: true,
-            path: "/keepalive",
-            protocol: "HTTP",
-            interval: 5,
-            healthyThreshold: 2,
-            timeout: 3,
+                ports: [
+                  {
+                    listen: "80/http",
+                    forward: "4848/http",
+                  },
+                  {
+                    listen: "443/https",
+                    forward: "4848/http",
+                  },
+                ],
+              }
+            : {
+                ports: [
+                  {
+                    listen: "80/http",
+                    forward: "4848/http",
+                  },
+                ],
+              }),
+        },
+        transform: {
+          target: {
+            healthCheck: {
+              enabled: true,
+              path: "/keepalive",
+              protocol: "HTTP",
+              interval: 5,
+              healthyThreshold: 2,
+              timeout: 3,
+            },
+            stickiness: {
+              enabled: true,
+              type: "lb_cookie",
+              cookieDuration: 120,
+            },
+            loadBalancingAlgorithmType: "least_outstanding_requests",
           },
-          stickiness: {
-            enabled: true,
-            type: "lb_cookie",
-            cookieDuration: 120,
-          },
-          loadBalancingAlgorithmType: "least_outstanding_requests",
         },
       },
-    });
+      {
+        // Wait for replication-manager to come up first, for breaking changes
+        // to replication-manager interface.
+        dependsOn: [replicationManager],
+      }
+    );
 
     // Update permissions
     new command.local.Command(
