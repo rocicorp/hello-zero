@@ -11,11 +11,11 @@ import { randomMessage } from "./test-data";
 function App() {
   const z = useZero<Schema>();
   const [users] = useQuery(z.query.user, {
-    ttl: "forever",
+    ttl: '5m',
   });
 
   const [mediums] = useQuery(z.query.medium, {
-    ttl: "forever",
+    ttl: '5m',
   });
 
   const [filterUser, setFilterUser] = useState("");
@@ -23,7 +23,7 @@ function App() {
 
   const all = z.query.message;
   const [allMessages] = useQuery(all, {
-    ttl: "forever",
+    ttl: '5m',
   });
 
   let filtered = all
