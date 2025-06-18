@@ -3,10 +3,11 @@ import { useQuery, useZero } from "@rocicorp/zero/react";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { formatDate } from "./date";
-import { randInt } from "./rand";
+import { randID, randInt } from "./rand";
 import { RepeatButton } from "./repeat-button";
 import { schema, Schema } from "./schema";
-import { randomMessage } from "./test-data";
+
+let count = 0;
 
 function App() {
   const z = useZero<Schema>();
@@ -39,6 +40,8 @@ function App() {
     filtered = filtered.where("body", "LIKE", `%${escapeLike(filterText)}%`);
   }
 
+  filtered = filtered.limit(25);
+
   const [filteredMessages] = useQuery(filtered);
 
   const hasFilters = filterUser || filterText;
@@ -56,7 +59,19 @@ function App() {
         <div>
           <RepeatButton
             onTrigger={() => {
-              z.mutate.message.insert(randomMessage(users, mediums));
+              z.mutateBatch(async (tx) => {
+                await Promise.all(
+                  new Array(300).fill(null).map(() => {
+                    tx.message.insert({
+                      id: randID(),
+                      body: "message " + count++,
+                      senderID: users[randInt(users.length)].id,
+                      mediumID: mediums[randInt(mediums.length)].id,
+                      timestamp: Date.now() + count,
+                    });
+                  })
+                );
+              });
             }}
           >
             Add Messages
