@@ -11,11 +11,11 @@ import { randomMessage } from "./test-data";
 function App() {
   const z = useZero<Schema>();
   const [users] = useQuery(z.query.user, {
-    ttl: '5m',
+    ttl: "5m",
   });
 
   const [mediums] = useQuery(z.query.medium, {
-    ttl: '5m',
+    ttl: "5m",
   });
 
   const [filterUser, setFilterUser] = useState("");
@@ -23,7 +23,7 @@ function App() {
 
   const all = z.query.message;
   const [allMessages] = useQuery(all, {
-    ttl: '5m',
+    ttl: "5m",
   });
 
   let filtered = all
@@ -70,7 +70,6 @@ function App() {
                 return false;
               }
               if (allMessages.length === 0) {
-                alert("No messages to remove");
                 return false;
               }
 
@@ -207,6 +206,7 @@ function App() {
               <th>Sender</th>
               <th>Medium</th>
               <th>Message</th>
+              <th>Labels</th>
               <th>Sent</th>
               <th>Edit</th>
             </tr>
@@ -217,6 +217,7 @@ function App() {
                 <td align="left">{message.sender?.name}</td>
                 <td align="left">{message.medium?.name}</td>
                 <td align="left">{message.body}</td>
+                <td align="left">{message.labels.join(", ")}</td>
                 <td align="right">{formatDate(message.timestamp)}</td>
                 <td
                   onMouseDown={(e) => {

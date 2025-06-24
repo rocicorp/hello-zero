@@ -14,6 +14,7 @@ CREATE TABLE "message" (
   "sender_id" VARCHAR REFERENCES "user"(id),
   "medium_id" VARCHAR REFERENCES "medium"(id),
   "body" VARCHAR NOT NULL,
+  "labels" VARCHAR[] NOT NULL,
   "timestamp" TIMESTAMP not null
 );
 

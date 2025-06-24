@@ -17,6 +17,7 @@ import {
   number,
   relationships,
   PermissionsConfig,
+  json,
 } from "@rocicorp/zero";
 
 const message = table("message")
@@ -25,6 +26,7 @@ const message = table("message")
     senderID: string().from("sender_id"),
     mediumID: string().from("medium_id"),
     body: string(),
+    labels: json<string[]>(),
     timestamp: number(),
   })
   .primaryKey("id");

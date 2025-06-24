@@ -21,6 +21,8 @@ const replies = [
   "I could send you a tarball, but it won't work",
 ];
 
+const labelChoices = ["npm", "zero", "package", "install"];
+
 export function randomMessage(
   users: readonly User[],
   mediums: readonly Medium[]
@@ -32,11 +34,19 @@ export function randomMessage(
   const messages = isRequest ? requests : replies;
   const senders = users.filter((u) => u.partner === !isRequest);
   const senderID = senders[randInt(senders.length)].id;
+  const labels = [
+    ...new Set(
+      new Array<string>(randInt(2) + 1)
+        .fill("")
+        .map(() => labelChoices[randInt(labelChoices.length)])
+    ),
+  ];
   return {
     id,
     senderID,
     mediumID,
     body: messages[randInt(messages.length)],
+    labels,
     timestamp,
   };
 }
