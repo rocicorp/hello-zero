@@ -1,4 +1,4 @@
-import { randBetween, randID, randInt } from "./rand";
+import { randID, randInt } from "./rand";
 import { Medium, Message, User } from "./schema";
 
 const requests = [
@@ -29,7 +29,7 @@ export function randomMessage(
 ): Message {
   const id = randID();
   const mediumID = mediums[randInt(mediums.length)].id;
-  const timestamp = randBetween(1727395200000, new Date().getTime());
+  //const timestamp = randBetween(1727395200000, new Date().getTime());
   const isRequest = randInt(10) <= 6;
   const messages = isRequest ? requests : replies;
   const senders = users.filter((u) => u.partner === !isRequest);
@@ -47,6 +47,6 @@ export function randomMessage(
     mediumID,
     body: messages[randInt(messages.length)],
     labels,
-    timestamp,
+    timestamp: null,
   };
 }

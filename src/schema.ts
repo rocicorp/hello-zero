@@ -27,7 +27,7 @@ const message = table("message")
     mediumID: string().from("medium_id"),
     body: string(),
     labels: json<string[]>(),
-    timestamp: number(),
+    timestamp: number().optional(),
   })
   .primaryKey("id");
 
