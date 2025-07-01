@@ -39,7 +39,7 @@ function App() {
     filtered = filtered.where("body", "LIKE", `%${escapeLike(filterText)}%`);
   }
 
-  const [filteredMessages] = useQuery(filtered);
+  const [filteredMessages] = useQuery(filtered.limit(5));
 
   const hasFilters = filterUser || filterText;
 
@@ -218,7 +218,11 @@ function App() {
                 <td align="left">{message.medium?.name}</td>
                 <td align="left">{message.body}</td>
                 <td align="left">{message.labels.join(", ")}</td>
-                <td align="right">{formatDate(message.timestamp)}</td>
+                <td align="right">
+                  {message.timestamp !== null
+                    ? formatDate(message.timestamp)
+                    : "null"}
+                </td>
                 <td
                   onMouseDown={(e) => {
                     if (message.senderID !== z.userID && !e.shiftKey) {
