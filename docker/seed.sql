@@ -1,7 +1,8 @@
 CREATE TABLE "user" (
   "id" VARCHAR PRIMARY KEY,
   "name" VARCHAR NOT NULL,
-  "partner" BOOLEAN NOT NULL
+  "partner" BOOLEAN NOT NULL,
+  "labels" BOOLEAN[] NOT NULL
 );
 
 CREATE TABLE "medium" (
@@ -17,15 +18,15 @@ CREATE TABLE "message" (
   "timestamp" TIMESTAMP not null
 );
 
-INSERT INTO "user" (id, name, partner) VALUES ('ycD76wW4R2', 'Aaron', true);
-INSERT INTO "user" (id, name, partner) VALUES ('IoQSaxeVO5', 'Matt', true);
-INSERT INTO "user" (id, name, partner) VALUES ('WndZWmGkO4', 'Cesar', true);
-INSERT INTO "user" (id, name, partner) VALUES ('ENzoNm7g4E', 'Erik', true);
-INSERT INTO "user" (id, name, partner) VALUES ('dLKecN3ntd', 'Greg', true);
-INSERT INTO "user" (id, name, partner) VALUES ('enVvyDlBul', 'Darick', true);
-INSERT INTO "user" (id, name, partner) VALUES ('9ogaDuDNFx', 'Alex', true);
-INSERT INTO "user" (id, name, partner) VALUES ('6z7dkeVLNm', 'Dax', false);
-INSERT INTO "user" (id, name, partner) VALUES ('7VoEoJWEwn', 'Nate', false);
+INSERT INTO "user" (id, name, partner, labels) VALUES ('ycD76wW4R2', 'Aaron', true, ARRAY[true, false]);
+INSERT INTO "user" (id, name, partner, labels) VALUES ('IoQSaxeVO5', 'Matt', true, ARRAY[true, false]);
+INSERT INTO "user" (id, name, partner, labels) VALUES ('WndZWmGkO4', 'Cesar', true, ARRAY[true, false]);
+INSERT INTO "user" (id, name, partner, labels) VALUES ('ENzoNm7g4E', 'Erik', true, ARRAY[true, false]);
+INSERT INTO "user" (id, name, partner, labels) VALUES ('dLKecN3ntd', 'Greg', true, ARRAY[true, false]);
+INSERT INTO "user" (id, name, partner, labels) VALUES ('enVvyDlBul', 'Darick', true, ARRAY[true, false]);
+INSERT INTO "user" (id, name, partner, labels) VALUES ('9ogaDuDNFx', 'Alex', true, ARRAY[true, false]);
+INSERT INTO "user" (id, name, partner, labels) VALUES ('6z7dkeVLNm', 'Dax', false, ARRAY[true, false]);
+INSERT INTO "user" (id, name, partner, labels) VALUES ('7VoEoJWEwn', 'Nate', false, ARRAY[true, false]);
 
 INSERT INTO "medium" (id, name) VALUES ('G14bSFuNDq', 'Discord');
 INSERT INTO "medium" (id, name) VALUES ('b7rqt_8w_H', 'Twitter DM');

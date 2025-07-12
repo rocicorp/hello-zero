@@ -13,6 +13,7 @@ function App() {
   const [users] = useQuery(z.query.user, {
     ttl: "forever",
   });
+  console.log(users);
 
   const [mediums] = useQuery(z.query.medium, {
     ttl: "forever",
