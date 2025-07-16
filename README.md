@@ -153,7 +153,7 @@ If you are using Docker (referencing the example in
 [docker](docker/docker-compose.yml)), run:
 
 ```bash
-npm run docker-up
+npm run dev:db-up
 ```
 
 **2. Start the zero cache server (in a separate terminal):**
