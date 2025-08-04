@@ -10,21 +10,14 @@ import { randomMessage } from "./test-data";
 
 function App() {
   const z = useZero<Schema>();
-  const [users] = useQuery(z.query.user, {
-    ttl: "5m",
-  });
-
-  const [mediums] = useQuery(z.query.medium, {
-    ttl: "5m",
-  });
+  const [users] = useQuery(z.query.user);
+  const [mediums] = useQuery(z.query.medium);
 
   const [filterUser, setFilterUser] = useState("");
   const [filterText, setFilterText] = useState("");
 
   const all = z.query.message;
-  const [allMessages] = useQuery(all, {
-    ttl: "5m",
-  });
+  const [allMessages] = useQuery(all);
 
   let filtered = all
     .related("medium")
