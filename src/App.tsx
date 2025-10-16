@@ -5,7 +5,7 @@ import { useState } from "react";
 import { formatDate } from "./date";
 import { randInt } from "./rand";
 import { RepeatButton } from "./repeat-button";
-import { schema, Schema } from "./schema";
+import { Schema } from "./schema";
 import { randomMessage } from "./test-data";
 
 function App() {
@@ -105,44 +105,6 @@ function App() {
               Login
             </button>
           )}
-          <button
-            onMouseDown={async () => {
-              alert("Open dev tools console tab to view inspector output.");
-              const inspector = await z.inspect();
-              const client = inspector.client;
-
-              const style =
-                "background-color: darkblue; color: white; font-style: italic; font-size: 2em;";
-              console.log("%cPrinting inspector output...", style);
-              console.log(
-                "%cTo see pretty tables, leave devtools open, then press 'Inspect' button in main UI again.",
-                style
-              );
-              console.log(
-                "%cSorry this is so ghetto I was too tired to make a debug dialog.",
-                style
-              );
-
-              console.log("client:");
-              console.log(client);
-              console.log("client group:");
-              console.log(client.clientGroup);
-              console.log("client map:");
-              console.log(await client.map());
-              for (const tableName of Object.keys(schema.tables)) {
-                console.log(`table ${tableName}:`);
-                console.table(await client.rows(tableName));
-              }
-              console.log("client queries:");
-              console.table(await client.queries());
-              console.log("client group queries:");
-              console.table(await client.clientGroup.queries());
-              console.log("all clients in group");
-              console.table(await client.clientGroup.clients());
-            }}
-          >
-            Inspect
-          </button>
         </div>
       </div>
       <div className="controls">
