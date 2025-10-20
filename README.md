@@ -108,19 +108,35 @@ createRoot(document.getElementById("root")!).render(
 );
 ```
 
-4. **Using Zero in Components** Example usage in React components. See
+4. **Set up saved queries**  See [queries.ts](src/queries.ts):
+
+```typescript
+import { savedQuery } from "@rocicorp/zero";
+import { schema } from "./schema";
+
+const builder = createBuilder(schema);
+
+export const queries = {
+  users: savedQuery('users', z.tuple([]), () => {
+    return builder.user.orderBy('name', 'asc');
+  }
+};
+```
+
+5. **Using Zero in Components** Example usage in React components. See
    [App.tsx](src/App.tsx):
 
 ```typescript
 import { useQuery, useZero } from "@rocicorp/zero/react";
 import { Schema } from "./schema";
+import { queries } from "./queries";
 
 // You may want to put this in its own file
 const useZ = useZero<Schema>;
 
 export function UsersPage() {
   const z = useZ();
-  const users = useQuery(z.query.user);
+  const [users] = useQuery(queries.users());
 
   if (!users) {
     return null;
@@ -138,7 +154,8 @@ export function UsersPage() {
 ```
 
 For more examples of queries, mutations, and relationships, explore the
-[App.tsx](src/App.tsx) file in this repository.
+[queries.ts](src/queries.ts) and [mutators.ts](src/mutators.ts) files in this
+repository.
 
 ### Optional: Authentication
 
