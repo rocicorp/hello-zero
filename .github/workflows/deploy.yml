@@ -6,9 +6,21 @@ on:
       - main
 
 jobs:
-  run-sst:
+  run-vercel:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Vercel Deploy
         run: npx vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }} --prod --scope=rocicorp
