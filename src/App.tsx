@@ -1,38 +1,28 @@
-import { escapeLike } from "@rocicorp/zero";
 import { useQuery, useZero } from "@rocicorp/zero/react";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { formatDate } from "./date";
 import { randInt } from "./rand";
 import { RepeatButton } from "./repeat-button";
-import { Schema } from "./schema";
+import { mutators } from "./mutators";
+import { queries } from "./queries";
 import { randomMessage } from "./test-data";
 
 function App() {
-  const z = useZero<Schema>();
-  const [users] = useQuery(z.query.user);
-  const [mediums] = useQuery(z.query.medium);
+  const z = useZero();
+  const [users] = useQuery(queries.users.all());
+  const [mediums] = useQuery(queries.mediums.all());
 
   const [filterUser, setFilterUser] = useState("");
   const [filterText, setFilterText] = useState("");
 
-  const all = z.query.message;
-  const [allMessages] = useQuery(all);
-
-  let filtered = all
-    .related("medium")
-    .related("sender")
-    .orderBy("timestamp", "desc");
-
-  if (filterUser) {
-    filtered = filtered.where("senderID", filterUser);
-  }
-
-  if (filterText) {
-    filtered = filtered.where("body", "LIKE", `%${escapeLike(filterText)}%`);
-  }
-
-  const [filteredMessages] = useQuery(filtered);
+  const [allMessages] = useQuery(queries.messages.feed({}));
+  const [filteredMessages] = useQuery(
+    queries.messages.feed({
+      senderID: filterUser || undefined,
+      search: filterText || undefined,
+    })
+  );
 
   const hasFilters = filterUser || filterText;
 
@@ -49,7 +39,7 @@ function App() {
         <div>
           <RepeatButton
             onTrigger={() => {
-              z.mutate.message.insert(randomMessage(users, mediums));
+              z.mutate(mutators.message.insert(randomMessage(users, mediums)));
             }}
           >
             Add Messages
@@ -67,7 +57,7 @@ function App() {
               }
 
               const index = randInt(allMessages.length);
-              z.mutate.message.delete({ id: allMessages[index].id });
+              z.mutate(mutators.message.delete({ id: allMessages[index].id }));
               return true;
             }}
           >
@@ -187,10 +177,12 @@ function App() {
                     if (body === null) {
                       return;
                     }
-                    z.mutate.message.update({
-                      id: message.id,
-                      body,
-                    });
+                    z.mutate(
+                      mutators.message.update({
+                        id: message.id,
+                        body,
+                      })
+                    );
                   }}
                 >
                   ✏️
