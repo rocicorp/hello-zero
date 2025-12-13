@@ -29,6 +29,7 @@ dist-ssr
 # zero
 zero-schema.json
 .vercel
+zero.db*
 
 # sst
 .sst

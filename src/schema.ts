@@ -6,17 +6,14 @@
 // for more complex examples, including many-to-many.
 
 import {
+  createBuilder,
   createSchema,
-  definePermissions,
-  ExpressionBuilder,
   Row,
-  ANYONE_CAN,
   table,
   string,
   boolean,
   number,
   relationships,
-  PermissionsConfig,
   json,
 } from "@rocicorp/zero";
 
@@ -62,55 +59,24 @@ const messageRelationships = relationships(message, ({ one }) => ({
 export const schema = createSchema({
   tables: [user, medium, message],
   relationships: [messageRelationships],
+  enableLegacyQueries: false,
+  enableLegacyMutators: false,
 });
+
+export const zql = createBuilder(schema);
 
 export type Schema = typeof schema;
 export type Message = Row<typeof schema.tables.message>;
 export type Medium = Row<typeof schema.tables.medium>;
 export type User = Row<typeof schema.tables.user>;
 
-// The contents of your decoded JWT.
-type AuthData = {
-  sub: string | null;
+export type AuthData = {
+  userID: string | null;
 };
 
-export const permissions = definePermissions<AuthData, Schema>(schema, () => {
-  const allowIfLoggedIn = (
-    authData: AuthData,
-    { cmpLit }: ExpressionBuilder<Schema, keyof Schema["tables"]>
-  ) => cmpLit(authData.sub, "IS NOT", null);
-
-  const allowIfMessageSender = (
-    authData: AuthData,
-    { cmp }: ExpressionBuilder<Schema, "message">
-  ) => cmp("senderID", "=", authData.sub ?? "");
-
-  return {
-    medium: {
-      row: {
-        select: ANYONE_CAN,
-      },
-    },
-    user: {
-      row: {
-        select: ANYONE_CAN,
-      },
-    },
-    message: {
-      row: {
-        // anyone can insert
-        insert: ANYONE_CAN,
-        update: {
-          // sender can only edit own messages
-          preMutation: [allowIfMessageSender],
-          // sender can only edit messages to be owned by self
-          postMutation: [allowIfMessageSender],
-        },
-        // must be logged in to delete
-        delete: [allowIfLoggedIn],
-        // everyone can read current messages
-        select: ANYONE_CAN,
-      },
-    },
-  } satisfies PermissionsConfig<AuthData, Schema>;
-});
+declare module "@rocicorp/zero" {
+  interface DefaultTypes {
+    schema: Schema;
+    context: AuthData;
+  }
+}

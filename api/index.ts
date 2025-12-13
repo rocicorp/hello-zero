@@ -1,10 +1,18 @@
 import { Hono } from "hono";
-import { setCookie } from "hono/cookie";
+import type { Context } from "hono";
+import { getCookie, setCookie } from "hono/cookie";
 import { handle } from "hono/vercel";
-import { SignJWT } from "jose";
+import { SignJWT, jwtVerify } from "jose";
+import { Pool } from "pg";
+import { mustGetMutator, mustGetQuery } from "@rocicorp/zero";
+import { handleMutateRequest, handleQueryRequest } from "@rocicorp/zero/server";
+import { zeroNodePg } from "@rocicorp/zero/server/adapters/pg";
+import { mutators } from "../src/mutators";
+import { queries } from "../src/queries";
+import { schema, type AuthData } from "../src/schema";
 
 export const config = {
-  runtime: "edge",
+  runtime: "nodejs",
 };
 
 export const app = new Hono().basePath("/api");
@@ -27,6 +35,27 @@ function randomInt(max: number) {
   return Math.floor(Math.random() * max);
 }
 
+const authSecret = new TextEncoder().encode(must(process.env.AUTH_SECRET));
+const pool = new Pool({
+  connectionString: must(process.env.ZERO_UPSTREAM_DB),
+});
+const dbProvider = zeroNodePg(schema, pool);
+
+const getContext = async (c: Context): Promise<AuthData> => {
+  const token = getCookie(c, "jwt");
+  if (!token) {
+    return { userID: null };
+  }
+
+  try {
+    const verified = await jwtVerify(token, authSecret);
+    const sub = verified.payload.sub;
+    return { userID: typeof sub === "string" ? sub : null };
+  } catch {
+    return { userID: null };
+  }
+};
+
 app.get("/login", async (c) => {
   const jwtPayload = {
     sub: userIDs[randomInt(userIDs.length)],
@@ -36,13 +65,36 @@ app.get("/login", async (c) => {
   const jwt = await new SignJWT(jwtPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("30days")
-    .sign(new TextEncoder().encode(must(process.env.ZERO_AUTH_SECRET)));
+    .sign(new TextEncoder().encode(must(process.env.AUTH_SECRET)));
 
   setCookie(c, "jwt", jwt, {
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   });
 
   return c.text("ok");
+});
+
+app.post("/zero/query", async (c) => {
+  const ctx = await getContext(c);
+  const result = await handleQueryRequest(
+    (name, args) => mustGetQuery(queries, name).fn({ args, ctx }),
+    schema,
+    c.req.raw
+  );
+  return c.json(result);
+});
+
+app.post("/zero/mutate", async (c) => {
+  const ctx = await getContext(c);
+  const result = await handleMutateRequest(
+    dbProvider,
+    (transact) =>
+      transact((tx, name, args) =>
+        mustGetMutator(mutators, name).fn({ tx, args, ctx })
+      ),
+    c.req.raw
+  );
+  return c.json(result);
 });
 
 export default handle(app);
