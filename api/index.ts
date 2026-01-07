@@ -1,15 +1,14 @@
 import { Hono } from "hono";
 import type { Context } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import { handle } from "hono/vercel";
 import { SignJWT, jwtVerify } from "jose";
 import { Pool } from "pg";
 import { mustGetMutator, mustGetQuery } from "@rocicorp/zero";
 import { handleMutateRequest, handleQueryRequest } from "@rocicorp/zero/server";
 import { zeroNodePg } from "@rocicorp/zero/server/adapters/pg";
-import { mutators } from "../src/mutators";
-import { queries } from "../src/queries";
-import { schema, type AuthData } from "../src/schema";
+import { mutators } from "../src/mutators.ts";
+import { queries } from "../src/queries.ts";
+import { schema, type AuthData } from "../src/schema.ts";
 
 export const config = {
   runtime: "nodejs",
@@ -69,6 +68,7 @@ app.get("/login", async (c) => {
 
   setCookie(c, "jwt", jwt, {
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    domain: process.env.COOKIE_DOMAIN ? process.env.COOKIE_DOMAIN : undefined,
   });
 
   return c.text("ok");
@@ -97,7 +97,7 @@ app.post("/zero/mutate", async (c) => {
   return c.json(result);
 });
 
-export default handle(app);
+export default app;
 
 function must<T>(val: T) {
   if (!val) {

@@ -1,12 +1,12 @@
 import { useQuery, useZero } from "@rocicorp/zero/react";
 import Cookies from "js-cookie";
 import { useState } from "react";
-import { formatDate } from "./date";
-import { randInt } from "./rand";
-import { RepeatButton } from "./repeat-button";
-import { mutators } from "./mutators";
-import { queries } from "./queries";
-import { randomMessage } from "./test-data";
+import { formatDate } from "./date.ts";
+import { randInt } from "./rand.ts";
+import { RepeatButton } from "./repeat-button.tsx";
+import { mutators } from "./mutators.ts";
+import { queries } from "./queries.ts";
+import { randomMessage } from "./test-data.ts";
 
 function App() {
   const z = useZero();

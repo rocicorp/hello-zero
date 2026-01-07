@@ -1,6 +1,6 @@
 import { defineMutator, defineMutators } from "@rocicorp/zero";
 import { z } from "zod";
-import { zql } from "./schema";
+import { zql } from "./schema.ts";
 
 export const mutators = defineMutators({
   message: {
