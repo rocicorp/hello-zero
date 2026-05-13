@@ -16,9 +16,7 @@ const context = { userID };
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ZeroProvider
-      {...{ userID: userID ?? "anon", cacheURL, schema, mutators, context }}
-    >
+    <ZeroProvider {...{ userID, cacheURL, schema, mutators, context }}>
       <App />
     </ZeroProvider>
   </StrictMode>

@@ -8,18 +8,17 @@
     "dev:zero-cache": "zero-cache-dev",
     "dev:db-up": "docker compose --env-file .env -f ./docker/docker-compose.yml up",
     "dev:db-down": "docker compose --env-file .env -f ./docker/docker-compose.yml down",
-    "dev:clean": "source .env && docker volume rm -f docker_zstart_pgdata && rm -rf \"${ZERO_REPLICA_FILE}\"*",
+    "dev:clean": "source .env && docker volume rm -f docker_zstart_pgdata && rm -rf \"${ZERO_REPLICA_FILE:-zero.db}\"*",
     "build": "tsc -b && vite build",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@rocicorp/zero": "^1.0.0",
+    "@rocicorp/zero": "1.5.0-canary.4",
     "jose": "^5.9.6",
     "js-cookie": "^3.0.5",
     "pg": "^8.16.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sst": "3.9.33",
     "zod": "^4.1.13"
   },
   "devDependencies": {
@@ -48,9 +47,5 @@
     "onlyBuiltDependencies": [
       "@rocicorp/zero-sqlite3"
     ]
-  },
-  "_": "For some reason, sst requires esbuild 0.25.0 when deploying the permission deployer",
-  "overrides": {
-    "esbuild": "0.25.0"
   }
 }
