@@ -1,5 +1,3 @@
-.sst
-
 # Logs
 logs
 *.log
@@ -30,6 +28,3 @@ dist-ssr
 zero-schema.json
 .vercel
 zero.db*
-
-# sst
-.sst

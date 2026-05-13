@@ -76,24 +76,26 @@ app.get("/login", async (c) => {
 
 app.post("/zero/query", async (c) => {
   const ctx = await getContext(c);
-  const result = await handleQueryRequest(
-    (name, args) => mustGetQuery(queries, name).fn({ args, ctx }),
+  const result = await handleQueryRequest({
+    handler: (name, args) => mustGetQuery(queries, name).fn({ args, ctx }),
     schema,
-    c.req.raw
-  );
+    request: c.req.raw,
+    userID: ctx.userID,
+  });
   return c.json(result);
 });
 
 app.post("/zero/mutate", async (c) => {
   const ctx = await getContext(c);
-  const result = await handleMutateRequest(
+  const result = await handleMutateRequest({
     dbProvider,
-    (transact) =>
+    handler: (transact) =>
       transact((tx, name, args) =>
         mustGetMutator(mutators, name).fn({ tx, args, ctx })
       ),
-    c.req.raw
-  );
+    request: c.req.raw,
+    userID: ctx.userID,
+  });
   return c.json(result);
 });
 
