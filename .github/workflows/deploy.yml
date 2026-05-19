@@ -27,8 +27,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
-        run: npx vercel build --yes --token=${{ secrets.VERCEL_TOKEN }} --prod --scope=rocicorp
-
-      - name: Deploy
-        run: npx vercel deploy --prebuilt --yes --token=${{ secrets.VERCEL_TOKEN }} --prod --scope=rocicorp
+      - name: Vercel Deploy
+        run: npx vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }} --prod --scope=rocicorp
