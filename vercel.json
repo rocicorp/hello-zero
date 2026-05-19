@@ -4,10 +4,5 @@
       "source": "/api/(.*)",
       "destination": "/api/index"
     }
-  ],
-  "build": {
-    "env": {
-      "ENABLE_EXPERIMENTAL_COREPACK": "1"
-    }
-  }
+  ]
 }
