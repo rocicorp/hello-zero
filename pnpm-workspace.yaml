@@ -1,4 +1,0 @@
-allowBuilds:
-  '@rocicorp/zero-sqlite3': true
-  esbuild: false
-  protobufjs: false
