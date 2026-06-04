@@ -7,25 +7,26 @@ React quickstart for [Zero](https://zero.rocicorp.dev/).
 First, install dependencies:
 
 ```sh
-npm i
+pnpm i
+pnpm approve-builds
 ```
 
 Next, run docker:
 
 ```sh
-npm run dev:db-up
+pnpm dev:db-up
 ```
 
 **In a second terminal**, run the zero cache server:
 
 ```sh
-npm run dev:zero-cache
+pnpm dev:zero-cache
 ```
 
 **In a third terminal**, run the Vite dev server:
 
 ```sh
-npm run dev:ui
+pnpm dev:ui
 ```
 
 ## Learn More
