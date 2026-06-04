@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@rocicorp/zero':
-        specifier: ^1.5.0
-        version: 1.5.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))
+        specifier: ^1.6.0
+        version: 1.6.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))
       jose:
         specifier: ^5.9.6
         version: 5.10.0
@@ -1336,14 +1336,15 @@ packages:
   '@rocicorp/resolver@1.0.2':
     resolution: {integrity: sha512-TfjMTQp9cNNqNtHFfa+XHEGdA7NnmDRu+ZJH4YF3dso0Xk/b9DMhg/sl+b6CR4ThFZArXXDsG1j8Mwl34wcOZQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    deprecated: Use Promise.withResolvers instead
 
   '@rocicorp/zero-sqlite3@1.0.18':
     resolution: {integrity: sha512-JwHcCijxKj94NDij5UDCJsGHo/D8z4j5De/5zphQ+NctQ4TWr9Zx7L+Q1JBfie4ewVS82Ingu+QKbIwWvdNFXg==}
     engines: {bun: '>=1.1.0', node: 20.x || 22.x || 23.x || 24.x || 25.x}
     hasBin: true
 
-  '@rocicorp/zero@1.5.0':
-    resolution: {integrity: sha512-D94kldhTAQWqcCZpW6oSLphwBQmJ3ErFs1AYC6Mw0l+qW2DYPJPnJIQ9JZFsK20r+XjTkV8H9ILLsI1ya8Bm2Q==}
+  '@rocicorp/zero@1.6.0':
+    resolution: {integrity: sha512-Rjr9fyrH1FMo3WJkL0kPx1GaIgTWmtQ73PtHEB9n4Ev0+fBJtO5miYzVUWH1Js0Uaj2+Tqc14WcXKrgnvpGNBA==}
     engines: {node: '>=22'}
     hasBin: true
     peerDependencies:
@@ -5000,7 +5001,7 @@ snapshots:
       bindings: 1.5.0
       prebuild-install: 7.1.3
 
-  '@rocicorp/zero@1.5.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))':
+  '@rocicorp/zero@1.6.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))':
     dependencies:
       '@badrap/valita': 0.3.11
       '@databases/escape-identifier': 1.0.3
