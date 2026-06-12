@@ -17,8 +17,10 @@ services:
   dev:
     image: mcr.microsoft.com/devcontainers/javascript-node:24
     command: sleep infinity
-    volumes:
-      - ..:/workspaces/hello-zero:cached
+    # No host bind mounts on purpose: open this repo with "Dev Containers:
+    # Clone Repository in Container Volume…", which mounts the cloned repo
+    # volume at /workspaces. A `..:/workspaces/hello-zero` host bind would
+    # break that flow on a machine with no host checkout.
     environment:
       # Overrides the 127.0.0.1:5430 value in .env (container env beats
       # dotenv, which won't override an already-set variable). Inside the
