@@ -1,0 +1,27 @@
+// Rocicorp dev container with sibling Compose services.
+//
+// The workspace runs as a Compose service beside the repo's existing
+// services (Postgres etc.). Compose is orchestrated by host-side Dev
+// Containers tooling.
+//
+// Security invariant: the dev container is the sandbox for development and
+// AI-agent work. It must not be able to create or control containers — no
+// Docker-in-Docker, no host Docker socket. It talks to sibling services
+// over the Compose network by service name.
+// See https://github.com/rocicorp/devcontainer-templates
+{
+  "name": "hello-zero",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "dev",
+  "workspaceFolder": "/workspaces/hello-zero",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "node",
+  "features": {
+    // Shared rocicorp features (https://github.com/rocicorp/devcontainer-features):
+    //  - agents: Codex (pinned) + Claude Code + gh; persists logins across rebuilds.
+    //  - pnpm: corepack-managed pnpm; removes npm/npx to enforce pnpm.
+    "ghcr.io/rocicorp/devcontainer-features/agents:1": {},
+    "ghcr.io/rocicorp/devcontainer-features/pnpm:1": {}
+  },
+  "postCreateCommand": "pnpm install"
+}

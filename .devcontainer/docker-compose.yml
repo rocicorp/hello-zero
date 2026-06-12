@@ -1,0 +1,30 @@
+# Dev workspace service. The repo's own Compose file (pulled in via
+# `include:`) provides the sibling services; this file only adds the
+# workspace and wires it to them.
+#
+# `include:` (not devcontainer.json's dockerComposeFile merging) is what
+# keeps relative paths inside the repo's Compose file resolving against
+# that file's own directory. Requires Docker Compose v2.20+.
+#
+# Inside the workspace, reach services by Compose service name, never
+# localhost — localhost is the workspace itself. Published ports in the
+# repo's Compose file still work from the host.
+
+include:
+  - ../docker/docker-compose.yml
+
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/javascript-node:24
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces/hello-zero:cached
+    environment:
+      # Overrides the 127.0.0.1:5430 value in .env (container env beats
+      # dotenv, which won't override an already-set variable). Inside the
+      # workspace localhost is the workspace itself, so connect to the
+      # sibling Postgres by its Compose service name and container port.
+      ZERO_UPSTREAM_DB: postgresql://user:password@zstart_postgres:5432/postgres
+    depends_on:
+      zstart_postgres:
+        condition: service_healthy
