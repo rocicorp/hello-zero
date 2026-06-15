@@ -1,17 +1,15 @@
-# Dev workspace service. The repo's own Compose file (pulled in via
-# `include:`) provides the sibling services; this file only adds the
-# workspace and wires it to them.
+# Dev workspace service. dockerComposeFile in devcontainer.json also pulls in
+# ../docker/docker-compose.yml which provides the sibling services (Postgres
+# etc.); this file only adds the workspace and wires it to them.
 #
-# `include:` (not devcontainer.json's dockerComposeFile merging) is what
-# keeps relative paths inside the repo's Compose file resolving against
-# that file's own directory. Requires Docker Compose v2.20+.
+# Relative paths inside ../docker/docker-compose.yml (build context etc.)
+# resolve against that file's own directory when Docker Compose loads it as a
+# separate -f entry — so `context: .` in docker/docker-compose.yml still means
+# docker/, not .devcontainer/.
 #
 # Inside the workspace, reach services by Compose service name, never
 # localhost — localhost is the workspace itself. Published ports in the
 # repo's Compose file still work from the host.
-
-include:
-  - ../docker/docker-compose.yml
 
 services:
   dev:

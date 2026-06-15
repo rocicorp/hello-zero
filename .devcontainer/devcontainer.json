@@ -11,7 +11,7 @@
 // See https://github.com/rocicorp/devcontainer-templates
 {
   "name": "hello-zero",
-  "dockerComposeFile": ["docker-compose.yml"],
+  "dockerComposeFile": ["../docker/docker-compose.yml", "docker-compose.yml"],
   "service": "dev",
   "workspaceFolder": "/workspaces/hello-zero",
   "shutdownAction": "stopCompose",
