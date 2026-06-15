@@ -1,0 +1,35 @@
+// Rocicorp dev container with sibling Compose services.
+//
+// The workspace runs as a Compose service beside the repo's existing
+// services (Postgres etc.). Compose is orchestrated by host-side Dev
+// Containers tooling.
+//
+// Security invariant: the dev container is the sandbox for development and
+// AI-agent work. It must not be able to create or control containers — no
+// Docker-in-Docker, no host Docker socket. It talks to sibling services
+// over the Compose network by service name.
+// See https://github.com/rocicorp/devcontainer-templates
+{
+  "name": "hello-zero",
+  "dockerComposeFile": ["../docker/docker-compose.yml", "docker-compose.yml"],
+  "service": "dev",
+  "workspaceFolder": "/workspaces/hello-zero",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "node",
+  // Forward the host's GITHUB_TOKEN into the container. Under agents:2, gh
+  // authenticates from this token rather than a persisted login. On the host,
+  // export GITHUB_TOKEN (e.g. from 1Password) before launching VS Code. See
+  // https://github.com/rocicorp/devcontainer-features#gh-auth-via-1password-no-host-side-credentials
+  "remoteEnv": {
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+  },
+  "features": {
+    // Shared rocicorp features (https://github.com/rocicorp/devcontainer-features):
+    //  - agents: Codex (pinned) + Claude Code + gh; persists the Claude login
+    //    across rebuilds; gh uses the forwarded GITHUB_TOKEN.
+    //  - pnpm: corepack-managed pnpm; removes npm/npx to enforce pnpm.
+    "ghcr.io/rocicorp/devcontainer-features/agents:2": {},
+    "ghcr.io/rocicorp/devcontainer-features/pnpm:1": {}
+  },
+  "postCreateCommand": "pnpm install"
+}

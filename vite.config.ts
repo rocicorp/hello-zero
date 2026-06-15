@@ -8,6 +8,9 @@ if (process.env.NODE_ENV === "development") {
 }
 
 export default defineConfig({
+  server: {
+    host: true,
+  },
   build: {
     target: "es2022",
   },
