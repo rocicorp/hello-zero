@@ -1,0 +1,10 @@
+# Bakes the repo's Postgres init scripts into the image so the dev container
+# works with "Dev Containers: Clone Repository in Container Volume" (no host
+# checkout to bind-mount). The repo's own docker/docker-compose.yml still uses
+# its host bind mount for normal `docker compose up`, unaffected.
+#
+# Postgres only runs *.sql/*.sh/*.sql.gz from /docker-entrypoint-initdb.d and
+# ignores everything else (e.g. the copied docker-compose.yml), so copying the
+# whole docker/ folder reproduces the bind mount's behavior exactly.
+FROM postgres:16.2-alpine
+COPY docker/ /docker-entrypoint-initdb.d/
