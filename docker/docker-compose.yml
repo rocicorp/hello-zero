@@ -1,6 +1,12 @@
 services:
   zstart_postgres:
-    image: postgres:16.2-alpine
+    # Seed scripts are baked into the image (see Dockerfile.postgres) rather
+    # than bind-mounted, so this works with "Clone Repository in Container
+    # Volume" where there is no host path to bind. After editing seed.sql,
+    # rebuild with `docker compose ... up --build`.
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     shm_size: 1g
     user: postgres
     restart: always
@@ -24,7 +30,6 @@ services:
       -c hot_standby_feedback=on
     volumes:
       - zstart_pgdata:/var/lib/postgresql/data
-      - ./:/docker-entrypoint-initdb.d
 
 volumes:
   zstart_pgdata:

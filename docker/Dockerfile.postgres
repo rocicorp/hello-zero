@@ -1,0 +1,10 @@
+# Bakes the Postgres seed into the image so it runs on first init.
+#
+# This used to be a bind mount of ./ -> /docker-entrypoint-initdb.d, but a bind
+# mount needs a shared host path. When the dev container is opened via "Dev
+# Containers: Clone Repository in Container Volume", the checkout lives in a
+# Docker named volume rather than on the host, so Docker refuses the bind
+# ("mounts denied: ... not shared from the host"). Baking the seed into the
+# image makes both `pnpm dev:db-up` and the dev container start the same way.
+FROM postgres:16.2-alpine
+COPY seed.sql /docker-entrypoint-initdb.d/

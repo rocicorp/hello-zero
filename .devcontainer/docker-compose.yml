@@ -30,20 +30,3 @@ services:
     depends_on:
       zstart_postgres:
         condition: service_healthy
-
-  zstart_postgres:
-    # Clone-in-Volume has no host checkout, so the bind mount of
-    # ./ -> /docker-entrypoint-initdb.d in ../docker/docker-compose.yml can't
-    # resolve (its host path isn't shared with Docker). Bake the init scripts
-    # into the image and drop the bind instead.
-    build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile.postgres
-    # Override the inherited postgres:16.2-alpine tag so the build doesn't
-    # clobber the official image in the local cache.
-    image: hello-zero-zstart-postgres:dev
-    # !override replaces the inherited volume list (a plain merge can't remove
-    # the init bind mount, since Compose only overrides volumes sharing a
-    # target). Keep only the data volume; the seed scripts are now baked in.
-    volumes: !override
-      - zstart_pgdata:/var/lib/postgresql/data
