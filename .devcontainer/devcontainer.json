@@ -20,8 +20,24 @@
     // Shared rocicorp features (https://github.com/rocicorp/devcontainer-features):
     //  - agents: Codex (pinned) + Claude Code + gh; persists logins across rebuilds.
     //  - pnpm: corepack-managed pnpm; removes npm/npx to enforce pnpm.
-    "ghcr.io/rocicorp/devcontainer-features/agents:1": {},
+    "ghcr.io/rocicorp/devcontainer-features/agents:2": {
+		"codexVersion": "0.139.0"
+	},
     "ghcr.io/rocicorp/devcontainer-features/pnpm:1": {}
   },
-  "postCreateCommand": "pnpm install"
+  "remoteEnv": {
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+  },
+  "postCreateCommand": "pnpm install",
+  "customizations": {
+    "vscode": {
+      "extensions": ["oxc.oxc-vscode@1.57.0"],
+      "settings": {
+        "editor.defaultFormatter": "oxc.oxc-vscode",
+        "editor.formatOnSave": true,
+        "extensions.autoUpdate": false,
+        "extensions.autoCheckUpdates": false
+      }
+    }
+  }
 }
