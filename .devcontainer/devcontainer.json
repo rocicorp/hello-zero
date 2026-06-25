@@ -16,19 +16,12 @@
   "workspaceFolder": "/workspaces/hello-zero",
   "shutdownAction": "stopCompose",
   "remoteUser": "node",
-  // Forward the host's GITHUB_TOKEN into the container. Under agents:2, gh
-  // authenticates from this token rather than a persisted login. On the host,
-  // export GITHUB_TOKEN (e.g. from 1Password) before launching VS Code. See
-  // https://github.com/rocicorp/devcontainer-features#gh-auth-via-1password-no-host-side-credentials
-  "remoteEnv": {
-    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
-  },
   "features": {
     // Shared rocicorp features (https://github.com/rocicorp/devcontainer-features):
-    //  - agents: Codex (pinned) + Claude Code + gh; persists the Claude login
-    //    across rebuilds; gh uses the forwarded GITHUB_TOKEN.
+    //  - agents: Codex (pinned) + Claude Code; persists the Claude login
+    //    across rebuilds.
     //  - pnpm: corepack-managed pnpm; removes npm/npx to enforce pnpm.
-    "ghcr.io/rocicorp/devcontainer-features/agents:2": {},
+    "ghcr.io/rocicorp/devcontainer-features/agents:3": {},
     "ghcr.io/rocicorp/devcontainer-features/pnpm:1": {}
   },
   "postCreateCommand": "pnpm install"
