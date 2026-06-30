@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@rocicorp/zero':
-        specifier: 1.7.0-canary.3
-        version: 1.7.0-canary.3(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(pg@8.20.0)(react@18.3.1)
+        specifier: 1.7.0
+        version: 1.7.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(pg@8.20.0)(react@18.3.1)
       jose:
         specifier: ^5.9.6
         version: 5.10.0
@@ -1144,8 +1144,8 @@ packages:
     resolution: {integrity: sha512-FavTiO8ETXFXDVfA87IThGduTTTR8iqzBnr/c60gUUmbk7knGEXPmf2B+yiNuluJD0ku0fL2V2r62UXnsLXl6w==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  '@rocicorp/logger@6.0.0':
-    resolution: {integrity: sha512-JbduzH6tP5soFnr/d4BV2Hto1RlGhoGmHo4wlMn5KK8oUWisTiK/M1lZkBiEO3kKyTQcsefykwJNOs6XHaOPWA==}
+  '@rocicorp/logger@6.1.0':
+    resolution: {integrity: sha512-4jOOwem9veRxl7uH15PsmT48PRd3OzM7n3umkO8WCMt8M929MJml4kfeqAcga8feZAfUb/+DRjsvl4ySgPWqYQ==}
 
   '@rocicorp/resolver@1.0.2':
     resolution: {integrity: sha512-TfjMTQp9cNNqNtHFfa+XHEGdA7NnmDRu+ZJH4YF3dso0Xk/b9DMhg/sl+b6CR4ThFZArXXDsG1j8Mwl34wcOZQ==}
@@ -1157,8 +1157,8 @@ packages:
     engines: {bun: '>=1.1.0', node: 22.x || 24.x}
     hasBin: true
 
-  '@rocicorp/zero@1.7.0-canary.3':
-    resolution: {integrity: sha512-fqGgr5rMOspW/413NtHAI6A/rjuXfzI2UvdddPY40KFdw3yysvJJhBKIrsDlydW0/gRGFcFdNVsESVmmUMtfmg==}
+  '@rocicorp/zero@1.7.0':
+    resolution: {integrity: sha512-YwjgAy0UL/Xggz8iOM4GbnrN3mavepMBwwTsj010e/r16KzB3/QebpdY6fqFxKERdnjPka7mdnbNNDFYjc7ZYQ==}
     engines: {node: '>=22'}
     hasBin: true
     peerDependencies:
@@ -3177,6 +3177,7 @@ packages:
 
   stream-to-promise@2.2.0:
     resolution: {integrity: sha512-HAGUASw8NT0k8JvIVutB2Y/9iBk7gpgEyAudXwNJmZERdMITGdajOa4VJfD/kNiA3TppQpTP4J+CtcHwdzKBAw==}
+    deprecated: Deprecated. Use node:stream/promises and node:stream/consumers instead.
 
   string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
@@ -4721,7 +4722,7 @@ snapshots:
     dependencies:
       '@rocicorp/resolver': 1.0.2
 
-  '@rocicorp/logger@6.0.0': {}
+  '@rocicorp/logger@6.1.0': {}
 
   '@rocicorp/resolver@1.0.2': {}
 
@@ -4730,7 +4731,7 @@ snapshots:
       bindings: 1.5.0
       prebuild-install: 7.1.3
 
-  '@rocicorp/zero@1.7.0-canary.3(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(pg@8.20.0)(react@18.3.1)':
+  '@rocicorp/zero@1.7.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(pg@8.20.0)(react@18.3.1)':
     dependencies:
       '@badrap/valita': 0.3.11
       '@databases/escape-identifier': 1.0.3
@@ -4751,7 +4752,7 @@ snapshots:
       '@opentelemetry/semantic-conventions': 1.41.1
       '@postgresql-typed/oids': 0.2.0
       '@rocicorp/lock': 1.0.4
-      '@rocicorp/logger': 6.0.0
+      '@rocicorp/logger': 6.1.0
       '@rocicorp/resolver': 1.0.2
       '@rocicorp/zero-sqlite3': 1.1.2
       '@standard-schema/spec': 1.1.0
@@ -4960,7 +4961,7 @@ snapshots:
 
   '@types/pg-pool@2.0.7':
     dependencies:
-      '@types/pg': 8.15.5
+      '@types/pg': 8.15.6
 
   '@types/pg@8.15.5':
     dependencies:
