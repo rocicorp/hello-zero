@@ -5,4 +5,4 @@ allowBuilds:
   esbuild: true
   protobufjs: true
 minimumReleaseAgeExclude:
-  - '@rocicorp/zero@1.6.0'
+  - '@rocicorp/zero'
