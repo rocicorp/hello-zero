@@ -8,7 +8,6 @@ First, install dependencies:
 
 ```sh
 pnpm i
-pnpm approve-builds
 ```
 
 Next, run docker:
