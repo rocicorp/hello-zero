@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@rocicorp/zero':
-        specifier: 1.10.0-canary.17
-        version: 1.10.0-canary.17(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))
+        specifier: 1.10.0
+        version: 1.10.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))
       jose:
         specifier: ^5.9.6
         version: 5.10.0
@@ -1157,8 +1157,8 @@ packages:
     engines: {bun: '>=1.1.0', node: 22.x || 24.x}
     hasBin: true
 
-  '@rocicorp/zero@1.10.0-canary.17':
-    resolution: {integrity: sha512-gaSrKeoX5hZV2Ub5cIeOsx9q+EkrK4gOKrK7fQhJ7PBw4Li0x+W2nSuvaLvP0nABD2Ef8avws6FGNMf4zK9Q7g==}
+  '@rocicorp/zero@1.10.0':
+    resolution: {integrity: sha512-u+0mrWEP0IBAQY4lbtnhNjpyjee5zSTNxpeY9j14apME1PYshmhdTvbNwmyaoumvBt9MrQGCEr5y7W6utj+Vjg==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -2090,6 +2090,7 @@ packages:
   eslint@9.39.4:
     resolution: {integrity: sha512-XoMjdBOwe/esVgEvLmNsD3IRHkm7fbKIUGvrleloJXUZgDHig2IPWNniv+GwjyJXzuNqVjlr5+4yVUZjycJwfQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -4621,7 +4622,7 @@ snapshots:
     dependencies:
       node-gyp-build: 4.8.4
 
-  '@rocicorp/zero@1.10.0-canary.17(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))':
+  '@rocicorp/zero@1.10.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))':
     dependencies:
       '@badrap/valita': 0.3.11
       '@databases/escape-identifier': 1.0.3
