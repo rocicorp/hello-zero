@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@rocicorp/zero':
-        specifier: 1.11.0-canary.43
-        version: 1.11.0-canary.43(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))
+        specifier: 1.11.0
+        version: 1.11.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))
       jose:
         specifier: ^5.9.6
         version: 5.10.0
@@ -1157,8 +1157,8 @@ packages:
     engines: {bun: '>=1.1.0', node: 22.x || 24.x}
     hasBin: true
 
-  '@rocicorp/zero@1.11.0-canary.43':
-    resolution: {integrity: sha512-5etM2cENJi/5IgH94mHC9CuWyb2uKX1GxpDnDjD7T3n2jRhZdwMhdBGVKvE5B9SQAXkVhqosX2EuqxDItAN2Hw==}
+  '@rocicorp/zero@1.11.0':
+    resolution: {integrity: sha512-E28zBTeQrK3mDczOmmOdUqKRB+5ezrnvqoy8Q3Ld7E5NwCNMKuhlEkU8tAMiV5mSEc7CoF/eQJqjy+haQmiNzQ==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -4626,7 +4626,7 @@ snapshots:
     dependencies:
       node-gyp-build: 4.8.4
 
-  '@rocicorp/zero@1.11.0-canary.43(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))':
+  '@rocicorp/zero@1.11.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))':
     dependencies:
       '@badrap/valita': 0.5.5
       '@databases/escape-identifier': 1.0.3
