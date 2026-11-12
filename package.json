@@ -13,7 +13,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@rocicorp/zero": "1.12.0-canary.12",
+    "@rocicorp/zero": "1.12.0",
     "jose": "^5.9.6",
     "js-cookie": "^3.0.5",
     "pg": "^8.16.3",
@@ -25,8 +25,8 @@
     "@eslint/js": "^9.9.0",
     "@hono/node-server": "^1.13.2",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^22.7.9",
     "@types/pg": "^8",
+    "@types/node": "^22.7.9",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
